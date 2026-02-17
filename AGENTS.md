@@ -9,6 +9,6 @@ Universal web search across 100+ search engines and result types.
 ## Quick Reference
 
 - **Skill Documentation**: [skills/serpapi-search/SKILL.md](skills/serpapi-search/SKILL.md)
-- **Search Engines**: [references/ENGINES.md](references/ENGINES.md) — Complete list of 107 supported engines
+- **Search Engines**: [skills/serpapi-search/references/ENGINES.md](skills/serpapi-search/references/ENGINES.md) — Complete list of 107 supported engines
 - **API Key Setup**: [docs/api-key-setup.md](docs/api-key-setup.md) — Per-agent configuration guide
 - **Installation**: [README.md](README.md) — Getting started guide
