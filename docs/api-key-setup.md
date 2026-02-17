@@ -18,79 +18,15 @@ Security is vital. Follow these practices to keep your account safe:
 
 ## Per-Agent Configuration
 
+Use the [serpapi-mcp](https://github.com/serpapi/serpapi-mcp) server for Model Context Protocol integration.
+
 ### Claude Code
-
-To add SerpApi search to Claude Code, use the MCP configuration.
-
-**MCP Configuration**
-Add this to your MCP settings or run the command:
-
-```bash
-claude mcp add-json '{
-  "mcpServers": {
-    "serpapi": {
-      "command": "npx",
-      "args": ["-y", "@serpapi/serpapi-mcp"],
-      "env": {
-        "SERPAPI_API_KEY": "your_key_here"
-      }
-    }
-  }
-}'
-```
-
-### Cursor
-
-Cursor allows you to add MCP servers through the UI or configuration files.
-
-**UI Setup**
-1.  Go to Settings > Features > MCP.
-2.  Add a new server with the name `serpapi`.
-3.  Set the type to `command`.
-4.  Use this command: `export SERPAPI_API_KEY=your_key_here && npx -y @serpapi/serpapi-mcp`.
-
-### Codex
-
-Codex uses the `.agents/skills/` directory for skill discovery.
-
-1.  Place the skill in `.agents/skills/serpapi-search/`.
-2.  Set the environment variable in your terminal:
-    ```bash
-    export SERPAPI_API_KEY=your_key_here
-    ```
-
-### Windsurf
-
-Windsurf loads skills from `.windsurf/skills/`.
-
-1.  Install the skill to `.windsurf/skills/serpapi-search/`.
-2.  Ensure `SERPAPI_API_KEY` is set in your environment:
-    ```bash
-    export SERPAPI_API_KEY=your_key_here
-    ```
-
-### OpenClaw
-
-OpenClaw searches for skills in `.openclaw/skills/`.
-
-1.  Copy the skill files to `.openclaw/skills/serpapi-search/`.
-2.  Provide your key via the environment:
-    ```bash
-    export SERPAPI_API_KEY=your_key_here
-    ```
-
-### OpenCode
-
-OpenCode natively supports skills and looks in `.opencode/skills/`.
-
-1.  Install the skill to `.opencode/skills/serpapi-search-skill/`.
-2.  The agent will use the `SERPAPI_API_KEY` environment variable for all requests.
 
 ## Shell Environment
 
 For local development, add the key to your shell profile (`.zshrc` or `.bashrc`):
 
-```bash
+```
 export SERPAPI_API_KEY=your_key_here
 ```
 
@@ -105,7 +41,7 @@ Store your key as a secret in your repository settings.
 **Usage Example**
 Add this to your workflow file:
 
-```yaml
+```
 jobs:
   search:
     runs-on: ubuntu-latest

@@ -8,7 +8,7 @@ license: MIT
 
 If you have a `serpapi_search` tool available, use it directly:
 
-```
+```json
 serpapi_search(
   params={
     "engine": "google_light",
@@ -43,7 +43,7 @@ Use the following table to select the best engine for your use case.
 |:---|:---|:---|
 | General Web | `google_light` | Fastest, standard organic results. Use by default. |
 | Comprehensive | `google` | Full Google results including knowledge graph, local pack. |
-| News | `google_news_light` | Latest news results. |
+| News | `google_news_light` | Real-time news results. |
 | Images | `google_images` | Visual search and image results. |
 | Shopping | `google_shopping_light`| Product pricing and availability. |
 | Global Search | `bing` | Microsoft's search engine for alternative results. |
@@ -73,11 +73,11 @@ Use the following table to select the best engine for your use case.
 SerpApi provides "Light" versions of popular engines that are optimized for speed and cost.
 
 - `google_light`
-- `google_images_light`
 - `google_news_light`
 - `google_shopping_light`
-- `google_videos_light`
-- `duckduckgo_light`
+- `google_reverse_image_light`
+- `google_product_light`
+- `google_play_product_light`
 
 Faster response, lower cost, essential data. Use by default.
 
@@ -85,7 +85,7 @@ Faster response, lower cost, essential data. Use by default.
 
 All engines return a similar JSON structure centered around `organic_results`.
 
-```
+```json
 {
   "search_metadata": { "status": "Success", "created_at": "..." },
   "search_parameters": { "engine": "google_light", "q": "..." },

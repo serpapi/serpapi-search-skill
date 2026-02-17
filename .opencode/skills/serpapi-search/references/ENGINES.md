@@ -72,7 +72,7 @@ Complete list of 107 SerpApi search engines. Use the `engine` parameter to selec
 | google_travel | Google Travel results | q, gl, hl |
 | google_travel_explore | Google Travel Explore destinations | travel_type, destination |
 
-## Bing (9 engines)
+## Bing (7 engines)
 
 | Engine | Description | Key Parameters |
 |--------|-------------|----------------|
@@ -86,7 +86,7 @@ Complete list of 107 SerpApi search engines. Use the `engine` parameter to selec
 | bing_product | Bing Product results | product_id, mkt |
 | bing_reverse_image | Bing reverse image search | image_url, cc, mkt |
 
-## DuckDuckGo (4 engines)
+## DuckDuckGo (5 engines)
 
 | Engine | Description | Key Parameters |
 |--------|-------------|----------------|

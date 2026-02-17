@@ -26,44 +26,44 @@ Search the web, news, images, shopping, videos, maps, flights, hotels, jobs, and
 Pick the installation method for your agent.
 
 ### Claude Code
-```bash
+```
 git clone https://github.com/serpapi/serpapi-search-skill.git
 cp -r serpapi-search-skill/skills/serpapi-search ~/.claude/skills/
 ```
 See [api-key-setup.md](docs/api-key-setup.md#claude-code) for MCP configuration.
 
 ### Cursor
-```bash
+```
 cp -r skills/serpapi-search .cursor/skills/
 ```
 Or use the Remote Rules URL pointing to your repository's `SKILL.md`.
 
 ### Codex
-```bash
+```
 cp -r skills/serpapi-search .agents/skills/
 # OR
 npx ai-agent-skills install serpapi-search
 ```
 
 ### Windsurf
-```bash
+```
 cp -r skills/serpapi-search .windsurf/skills/
 ```
 
 ### OpenClaw
-```bash
+```
 cp -r skills/serpapi-search ~/.openclaw/skills/
 ```
 
 ### OpenCode
-```bash
+```
 cp -r skills/serpapi-search .opencode/skills/
 ```
 OpenCode also automatically reads skills from `.claude/skills/` and `.agents/skills/`.
 
 ### Universal (curl)
 Download the skill definition directly to any directory:
-```bash
+```
 curl -O https://raw.githubusercontent.com/serpapi/serpapi-search-skill/main/skills/serpapi-search/SKILL.md
 ```
 
@@ -77,7 +77,7 @@ Search across 100+ platforms including Google, Bing, DuckDuckGo, YouTube, and Am
 
 - `google_light`: Fastest general web search (default).
 - `google_images_light`: Optimized image search.
-- `google_news_light`: Real-time news results.
+- `google_news_light`: Latest news results.
 - `google_shopping_light`: Product pricing and availability.
 - `google_videos_light`: Video search.
 - `duckduckgo_light`: Privacy-focused web results.
