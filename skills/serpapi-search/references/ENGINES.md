@@ -95,7 +95,7 @@ Complete list of 107 SerpApi search engines. Use the `engine` parameter to selec
 | duckduckgo_maps | DuckDuckGo Maps results | q, kl, l, lat, lon |
 | duckduckgo_news | DuckDuckGo News results | q, kl, l, df |
 
-## Yahoo, Yandex, Baidu, Naver (11 engines)
+## Yahoo, Yandex, Baidu, Naver (15 engines)
 
 | Engine | Description | Key Parameters |
 |--------|-------------|----------------|
@@ -133,7 +133,7 @@ Complete list of 107 SerpApi search engines. Use the `engine` parameter to selec
 | home_depot_product | Home Depot product details | product_id |
 | home_depot_product_reviews | Home Depot product reviews | product_id, page |
 
-## Travel & Local (6 engines)
+## Travel & Local (7 engines)
 
 | Engine | Description | Key Parameters |
 |--------|-------------|----------------|
@@ -145,7 +145,7 @@ Complete list of 107 SerpApi search engines. Use the `engine` parameter to selec
 | opentable | OpenTable results | q, metroId |
 | open_table_reviews | OpenTable reviews | restaurant_id |
 
-## Media (4 engines)
+## Media (9 engines)
 
 | Engine | Description | Key Parameters |
 |--------|-------------|----------------|
@@ -175,21 +175,6 @@ Complete list of 107 SerpApi search engines. Use the `engine` parameter to selec
 |--------|-------------|----------------|
 | facebook_profile | Facebook public profile data | profile_id |
 
-## Light Endpoints (Optimized for Speed)
-
-These engines provide faster responses with essential data. Use by default when speed is a priority.
-
-| Engine | Description | Key Parameters |
-|--------|-------------|----------------|
-| google_light | Core Google search | q, location, gl, hl |
-| google_images_light | Google Images | q, location, gl, hl |
-| google_news_light | Google News | q, gl, hl |
-| google_shopping_light | Google Shopping | q, location, gl, hl |
-| google_videos_light | Google Videos | q, location, gl, hl |
-| duckduckgo_light | DuckDuckGo search | q, kl, l |
-
-*Note: Faster response, lower cost, essential data. Use by default.*
-
 ---
-See [serpapi.com/pricing](https://serpapi.com/pricing) for details on credit costs.
+See [serpapi.com/pricing](https://serpapi.com/pricing) for details on credit costs. Light endpoint names and usage are covered in [SKILL.md](../../skills/serpapi-search/SKILL.md#light-endpoints).
 

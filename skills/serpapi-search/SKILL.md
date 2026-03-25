@@ -6,7 +6,7 @@ license: MIT
 
 ## Tool Detection
 
-If you have a `serpapi_search` tool available, use it directly:
+If you have a `serpapi_search` tool available, use it directly. Always pass `mode="compact"` to strip heavy metadata fields (`search_metadata`, `search_parameters`) for cleaner, token-efficient LLM responses:
 
 ```
 serpapi_search(
@@ -17,6 +17,8 @@ serpapi_search(
   mode="compact"
 )
 ```
+
+> **Note:** The block above is MCP pseudocode. Exact invocation syntax depends on your agent runtime.
 
 The instructions below are for environments without a native tool.
 
@@ -44,13 +46,13 @@ Use the following table to select the best engine for your use case.
 | General Web | `google_light` | Fastest, standard organic results. Use by default. |
 | Comprehensive | `google` | Full Google results including knowledge graph, local pack. |
 | News | `google_news_light` | Latest news results. |
-| Images | `google_images` | Visual search and image results. |
+| Images | `google_images_light` | Visual search and image results. |
 | Shopping | `google_shopping_light`| Product pricing and availability. |
 | Global Search | `bing` | Microsoft's search engine for alternative results. |
 | Privacy-first | `duckduckgo` | Privacy-oriented web search. |
 | Academic | `google_scholar` | Research papers, citations, and patents. |
 | Local/Maps | `google_maps` | Places, reviews, and coordinates. |
-| Video | `youtube_search` | Video content and metadata. |
+| Video | `youtube` | Video content and metadata. |
 
 **Light vs Full:** Use Light by default. Use full engine when you need: knowledge graph, local pack, inline shopping, or featured snippets.
 
@@ -61,12 +63,16 @@ Use the following table to select the best engine for your use case.
 | `engine` | string | Yes | The search engine to use (e.g., `google_light`). |
 | `q` | string | Yes | The search query. |
 | `api_key` | string | Yes | Your SerpApi API key. |
-| `num` | integer | No | Number of results to return. |
-| `start` | integer | No | Result offset for pagination. |
-| `gl` | string | No | Country code (e.g., `us`, `uk`). Default: `us`. |
+| `num` | integer | No | Number of results to return (max 100 for most engines). Default: 10. |
+| `start` | integer | No | Result offset for pagination. Use with `num` (e.g., `start=10&num=10` for page 2). |
+| `gl` | string | No | Country code for locale (e.g., `us`, `uk`). Default: `us`. Use for country-level targeting. |
 | `hl` | string | No | Language code (e.g., `en`, `es`). Default: `en`. |
-| `location` | string | No | Canonical location (e.g., `Austin, Texas`). |
-| `no_cache` | boolean | No | Set to `true` to force a fresh crawl. |
+| `location` | string | No | Canonical city/region for precise geo-targeting (e.g., `Austin, Texas`). Takes precedence over `gl`. |
+| `tbs` | string | No | Time-based filter. Common values: `qdr:d` (past day), `qdr:w` (past week), `qdr:m` (past month). |
+| `safe` | string | No | Safe search level: `active` or `off`. |
+| `no_cache` | string | No | Pass `"true"` to bypass cached results and force a fresh crawl. |
+
+> **Note:** The `youtube` engine uses `search_query` instead of `q` as its query parameter. All other engines use `q`.
 
 ## Light Endpoints
 
@@ -83,7 +89,7 @@ Faster response, lower cost, essential data. Use by default.
 
 ## Response Format
 
-All engines return a similar JSON structure centered around `organic_results`.
+All engines return JSON with `search_metadata`, `search_parameters`, and an engine-specific results array (see Engine Result Keys below).
 
 ```
 {
@@ -101,7 +107,20 @@ All engines return a similar JSON structure centered around `organic_results`.
 }
 ```
 
-*Other engines follow a similar structure. See engine-specific docs at serpapi.com.*
+**Engine Result Keys:** Different engines use different top-level array keys. Check the correct key for your engine:
+
+| Engine Category | Result Key |
+|:---|:---|
+| Web (`google_light`, `google`, `bing`, `duckduckgo`) | `organic_results` |
+| News (`google_news_light`, `bing_news`, `duckduckgo_news`) | `news_results` |
+| Images (`google_images_light`, `google_images`) | `images_results` |
+| Shopping (`google_shopping_light`, `amazon`, `walmart`) | `shopping_results` |
+| Jobs (`google_jobs`) | `jobs_results` |
+| Maps (`google_maps`) | `local_results` |
+| Videos (`google_videos_light`) | `video_results` |
+| YouTube (`youtube`) | `organic_results` |
+
+*Use `serpapi_pagination.next` to fetch subsequent pages.*
 
 ## Examples
 
@@ -135,13 +154,20 @@ curl -G "https://serpapi.com/search.json" \
   --data-urlencode "api_key=${SERPAPI_API_KEY}"
 ```
 
-## Mode Parameter
+### Time-Filtered Search
+Find results from the past week using `tbs`.
 
-For tool users: Recommend `mode: "compact"`. This strips heavy metadata fields like `search_metadata` and `search_parameters`, providing a cleaner response for LLMs.
+```bash
+curl -G "https://serpapi.com/search.json" \
+  --data-urlencode "q=latest AI models" \
+  --data-urlencode "engine=google_light" \
+  --data-urlencode "tbs=qdr:w" \
+  --data-urlencode "api_key=${SERPAPI_API_KEY}"
+```
 
 ## Locale
 
-Set `gl` (country) and `hl` (language) based on the user's context. Default is `gl=us`, `hl=en`. Using correct locale improves result relevance for local queries.
+Set `gl` and `hl` based on the user's context. Correct locale improves result relevance, ranking order, and availability of local features like knowledge panels.
 
 ## Limits & Pricing
 
