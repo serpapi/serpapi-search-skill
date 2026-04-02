@@ -10,7 +10,7 @@ This guide covers how to get and set up your SerpApi API key for AI coding agent
 
 ## Security Guidance
 
-*   **Environment Variables**: Always store your key in an environment variable named `SERPAPI_API_KEY`.
+*   **Environment Variables**: Always store your key in an environment variable named `SERPAPI_KEY`.
 *   **Never Commit Keys**: Do not commit your API key to any version control system.
 *   **Rotate Keys**: If you suspect exposure, rotate your key immediately in the SerpApi dashboard.
 
@@ -19,7 +19,7 @@ This guide covers how to get and set up your SerpApi API key for AI coding agent
 For local development, add the key to your shell profile (`.zshrc` or `.bashrc`):
 
 ```bash
-export SERPAPI_API_KEY=your_key_here
+export SERPAPI_KEY=your_key_here
 ```
 
 Reload your profile:
@@ -40,7 +40,7 @@ Use the [serpapi-mcp](https://github.com/serpapi/serpapi-mcp) server for Model C
 claude mcp add serpapi -- npx -y @serpapi/serpapi-mcp
 ```
 
-Then set your API key in the environment (see Shell Environment above) or pass it via `SERPAPI_API_KEY=your_key_here claude mcp add ...`.
+Then set your API key in the environment (see Shell Environment above) or pass it via `SERPAPI_KEY=your_key_here claude mcp add ...`.
 
 **Option B — Manual config:**
 
@@ -53,7 +53,7 @@ Add to `~/.claude/settings.json` (global) or `.claude/settings.json` (project-sc
       "command": "npx",
       "args": ["-y", "@serpapi/serpapi-mcp"],
       "env": {
-        "SERPAPI_API_KEY": "your_key_here"
+        "SERPAPI_KEY": "your_key_here"
       }
     }
   }
@@ -71,7 +71,7 @@ Add to `.cursor/mcp.json` (project) or `~/.cursor/mcp.json` (global):
       "command": "npx",
       "args": ["-y", "@serpapi/serpapi-mcp"],
       "env": {
-        "SERPAPI_API_KEY": "your_key_here"
+        "SERPAPI_KEY": "your_key_here"
       }
     }
   }
@@ -89,7 +89,7 @@ Add to `.windsurf/mcp.json`:
       "command": "npx",
       "args": ["-y", "@serpapi/serpapi-mcp"],
       "env": {
-        "SERPAPI_API_KEY": "your_key_here"
+        "SERPAPI_KEY": "your_key_here"
       }
     }
   }
@@ -105,14 +105,14 @@ Add to `.opencode/config.json` or rely on the shell environment variable above.
 Set the environment variable before launching the agent:
 
 ```bash
-export SERPAPI_API_KEY=your_key_here
+export SERPAPI_KEY=your_key_here
 ```
 
 ## CI/CD Configuration
 
 ### GitHub Actions
 
-Store your key as a [repository secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets) named `SERPAPI_API_KEY`, then reference it in your workflow:
+Store your key as a [repository secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets) named `SERPAPI_KEY`, then reference it in your workflow:
 
 ```yaml
 jobs:
@@ -121,9 +121,9 @@ jobs:
     steps:
       - name: Run agent with SerpApi
         env:
-          SERPAPI_API_KEY: ${{ secrets.SERPAPI_API_KEY }}
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
         run: |
-          echo "Agent will pick up SERPAPI_API_KEY from the environment"
+          echo "Agent will pick up SERPAPI_KEY from the environment"
 ```
 
 ### GitLab CI
@@ -133,9 +133,9 @@ Store the key as a [CI/CD variable](https://docs.gitlab.com/ee/ci/variables/) in
 ```yaml
 search-job:
   script:
-    - echo "Agent will pick up SERPAPI_API_KEY from CI environment"
+    - echo "Agent will pick up SERPAPI_KEY from CI environment"
   variables:
-    SERPAPI_API_KEY: $SERPAPI_API_KEY
+    SERPAPI_KEY: $SERPAPI_KEY
 ```
 
 ### Generic / Docker
@@ -143,6 +143,6 @@ search-job:
 Pass the key at runtime:
 
 ```bash
-docker run -e SERPAPI_API_KEY=your_key_here your-agent-image
+docker run -e SERPAPI_KEY=your_key_here your-agent-image
 ```
 

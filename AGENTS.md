@@ -8,7 +8,7 @@ Universal web search across 100+ search engines and result types.
 
 ## Overview
 
-Documentation-only skill package for AI coding agents. No executable code — the deliverable is Markdown files that agents consume. Powered by [SerpApi](https://serpapi.com) REST API via `serpapi_search` MCP tool or direct `curl`.
+Documentation-only skill package for AI coding agents. No executable code — the deliverable is Markdown files that agents consume. Powered by [SerpApi](https://serpapi.com) REST API via `serpapi_search` MCP tool, direct `curl`, or the [serpapi CLI](https://github.com/serpapi/serpapi-cli).
 
 ## Structure
 
@@ -18,7 +18,7 @@ Documentation-only skill package for AI coding agents. No executable code — th
 ├── README.md                                    # GitHub landing page, installation instructions
 ├── LICENSE                                      # MIT
 ├── docs/
-│   └── api-key-setup.md                         # SERPAPI_API_KEY config per agent + CI/CD
+│   └── api-key-setup.md                         # SERPAPI_KEY config per agent + CI/CD
 └── skills/serpapi-search/
     ├── SKILL.md                                 # Core skill definition (frontmatter + usage)
     └── references/
@@ -43,8 +43,8 @@ Hidden (not tracked in git):
 
 - **Default engine**: `google_light` — always recommend Light endpoints first for speed/cost.
 - **API key placeholder**: Use `your_key_here` consistently (never hardcode real keys).
-- **Env var name**: `SERPAPI_API_KEY` — standardized across all docs and examples.
-- **curl examples**: All use `${SERPAPI_API_KEY}` variable reference.
+- **Env var name**: `SERPAPI_KEY` — standardized across all docs and examples.
+- **curl examples**: All use `${SERPAPI_KEY}` variable reference.
 - **SKILL.md frontmatter**: YAML block with `name`, `description`, `license` fields.
 - **No executable code**: This repo is pure Markdown. No scripts, no tests, no build step.
 

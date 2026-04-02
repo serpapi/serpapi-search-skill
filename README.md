@@ -9,7 +9,7 @@ Search the web, news, images, shopping, videos, maps, flights, hotels, jobs, and
 ## Quick Start
 
 1.  Get your API key from the [SerpApi Dashboard](https://serpapi.com/dashboard).
-2.  Set the environment variable: `export SERPAPI_API_KEY=your_key_here`
+2.  Set the environment variable: `export SERPAPI_KEY=your_key_here`
 3.  Install the skill to your agent (see [Installation](#installation) below).
 4.  Start searching! See [SKILL.md](skills/serpapi-search/SKILL.md) for usage examples.
 
@@ -68,9 +68,20 @@ Download the skill definition directly to any directory:
 curl -O https://raw.githubusercontent.com/serpapi/serpapi-search-skill/main/skills/serpapi-search/SKILL.md
 ```
 
+### serpapi CLI
+If you prefer a CLI over raw curl, install the [serpapi CLI](https://github.com/serpapi/serpapi-cli):
+```bash
+brew install serpapi/serpapi-cli/serpapi
+```
+Then search directly from your shell:
+```bash
+export SERPAPI_KEY=your_key_here
+serpapi search engine=google_light q="coffee shops in Austin"
+```
+
 ## API Key Setup
 
-Configure your `SERPAPI_API_KEY` for secure access. Detailed instructions for environment variables, MCP settings, and CI/CD are available in [api-key-setup.md](docs/api-key-setup.md).
+Configure your `SERPAPI_KEY` for secure access. Detailed instructions for environment variables, MCP settings, and CI/CD are available in [api-key-setup.md](docs/api-key-setup.md).
 
 ## Available Engines
 

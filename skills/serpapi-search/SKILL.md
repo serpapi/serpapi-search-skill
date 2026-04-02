@@ -30,7 +30,14 @@ Get fast web results using the `google_light` engine:
 curl -G "https://serpapi.com/search.json" \
   --data-urlencode "q=coffee shops in Austin" \
   --data-urlencode "engine=google_light" \
-  --data-urlencode "api_key=${SERPAPI_API_KEY}"
+  --data-urlencode "api_key=${SERPAPI_KEY}"
+```
+
+Or with the [serpapi CLI](https://github.com/serpapi/serpapi-cli) (install: `brew install serpapi/serpapi-cli/serpapi`):
+
+```bash
+export SERPAPI_KEY=your_key_here
+serpapi search engine=google_light q="coffee shops in Austin"
 ```
 
 ## Endpoint
@@ -131,7 +138,7 @@ Search for the latest technology news.
 curl -G "https://serpapi.com/search.json" \
   --data-urlencode "q=artificial intelligence" \
   --data-urlencode "engine=google_news_light" \
-  --data-urlencode "api_key=${SERPAPI_API_KEY}"
+  --data-urlencode "api_key=${SERPAPI_KEY}"
 ```
 
 ### Bing Web Search
@@ -141,7 +148,7 @@ Alternative results for the same query.
 curl -G "https://serpapi.com/search.json" \
   --data-urlencode "q=serpapi documentation" \
   --data-urlencode "engine=bing" \
-  --data-urlencode "api_key=${SERPAPI_API_KEY}"
+  --data-urlencode "api_key=${SERPAPI_KEY}"
 ```
 
 ### Google Shopping (Light)
@@ -151,7 +158,7 @@ Find product prices and availability.
 curl -G "https://serpapi.com/search.json" \
   --data-urlencode "q=iphone 15" \
   --data-urlencode "engine=google_shopping_light" \
-  --data-urlencode "api_key=${SERPAPI_API_KEY}"
+  --data-urlencode "api_key=${SERPAPI_KEY}"
 ```
 
 ### Time-Filtered Search
@@ -162,7 +169,7 @@ curl -G "https://serpapi.com/search.json" \
   --data-urlencode "q=latest AI models" \
   --data-urlencode "engine=google_light" \
   --data-urlencode "tbs=qdr:w" \
-  --data-urlencode "api_key=${SERPAPI_API_KEY}"
+  --data-urlencode "api_key=${SERPAPI_KEY}"
 ```
 
 ## Locale
