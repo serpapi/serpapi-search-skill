@@ -56,6 +56,51 @@ cp -r skills/serpapi-search .windsurf/skills/
 cp -r skills/serpapi-search ~/.openclaw/skills/
 ```
 
+### NemoClaw (inside sandbox)
+
+```bash
+# 1. Install serpapi-cli inside the sandbox
+go install github.com/serpapi/serpapi-cli/cmd/serpapi@latest
+export SERPAPI_KEY=your_key_here
+
+# 2. Copy the skill into the workspace
+cp -r skills/serpapi-search skills/serpapi-search
+
+# 3. Apply the network policy
+openshell policy set skills/serpapi-search/serpapi.yaml
+
+# 4. Add to ~/.openclaw/openclaw.json
+# { "skills": { "entries": { "serpapi-search": { "enabled": true,
+#   "apiKey": { "source": "env", "provider": "default", "id": "SERPAPI_KEY" } } } } }
+
+# 5. Make permanent
+nemoclaw onboard
+```
+
+Or paste this into any AI assistant with access to your NemoClaw workspace:
+
+```
+Fetch https://raw.githubusercontent.com/serpapi/serpapi-search-skill/main/skills/serpapi-search/SKILL.md
+and save it to skills/serpapi-search/SKILL.md.
+
+Fetch https://raw.githubusercontent.com/serpapi/serpapi-search-skill/main/skills/serpapi-search/serpapi.yaml
+and save it to nemoclaw-blueprint/policies/presets/serpapi.yaml.
+
+Add this to ~/.openclaw/openclaw.json (home directory, not workspace):
+{
+  "skills": {
+    "entries": {
+      "serpapi-search": {
+        "enabled": true,
+        "apiKey": { "source": "env", "provider": "default", "id": "SERPAPI_KEY" }
+      }
+    }
+  }
+}
+
+Then run: nemoclaw onboard
+```
+
 ### OpenCode
 ```bash
 cp -r skills/serpapi-search .opencode/skills/
