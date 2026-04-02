@@ -1,0 +1,20 @@
+preset:
+  name: serpapi
+  description: "SerpApi search API access for serpapi-cli"
+
+network_policies:
+  serpapi:
+    name: serpapi
+    endpoints:
+      - host: serpapi.com
+        port: 443
+        protocol: rest
+        enforcement: enforce
+        tls: terminate
+        rules:
+          - allow: { method: GET, path: "/search.json" }
+          - allow: { method: GET, path: "/account.json" }
+          - allow: { method: GET, path: "/locations.json" }
+          - allow: { method: GET, path: "/searches/**" }
+    binaries:
+      - { path: /home/sandbox/go/bin/serpapi }
