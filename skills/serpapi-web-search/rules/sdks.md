@@ -83,4 +83,4 @@ Repo: [github.com/serpapi/serpapi-dotnet](https://github.com/serpapi/serpapi-dot
 
 ---
 
-All SDKs accept the same parameters as the REST API. See [parameters.md](parameters.md) for the full parameter list.
+All SDKs accept the same parameters as the REST API. See [parameters.md](parameters.md) for the full parameter list and [serpapi.com/search-api](https://serpapi.com/search-api) for the canonical reference.

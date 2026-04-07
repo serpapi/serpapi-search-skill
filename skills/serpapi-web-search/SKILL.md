@@ -19,12 +19,12 @@ license: MIT
 
 Use the first available method:
 
-**1. MCP tool** — use `serpapi_search` if available:
+**1. MCP tool** — use `serpapi_search` if available ([source](https://github.com/serpapi/serpapi-mcp)):
 ```
 serpapi_search(params={"engine": "google_light", "q": "query"}, mode="compact")
 ```
 
-**2. serpapi-cli** — preferred shell fallback; optimized for AI agents:
+**2. serpapi-cli** — preferred shell fallback; optimized for AI agents ([source](https://github.com/serpapi/serpapi-cli)):
 ```bash
 serpapi search engine=google_light q="your query"
 
@@ -73,8 +73,21 @@ For engines not listed above (flights, hotels, jobs, finance, patents, etc.), re
 ## Error Reference
 
 - **401** — Invalid or missing API key.
-- **429** — Monthly quota reached. Check [serpapi.com/dashboard](https://serpapi.com/dashboard).
+- **429** — Monthly quota reached. Check usage: `serpapi account` or [serpapi.com/dashboard](https://serpapi.com/dashboard) · [account API](https://serpapi.com/account-api).
 - **400** — Missing required parameter (`q` or `engine`).
+
+## Docs
+
+Official reference (link these when agents need deeper detail):
+
+| Topic | URL |
+|:---|:---|
+| Main API reference | [serpapi.com/search-api](https://serpapi.com/search-api) |
+| All engines (online) | [serpapi.com/search-engine-apis](https://serpapi.com/search-engine-apis) |
+| Locations lookup | [serpapi.com/locations-api](https://serpapi.com/locations-api) |
+| Account & quota API | [serpapi.com/account-api](https://serpapi.com/account-api) |
+| Search Index API (alpha) | [serpapi.com/search-index-api](https://serpapi.com/search-index-api) |
+| Pricing | [serpapi.com/pricing](https://serpapi.com/pricing) |
 
 ## Rules
 

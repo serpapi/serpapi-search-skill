@@ -209,5 +209,5 @@ Docs: [serpapi.com/search-index-api](https://serpapi.com/search-index-api)
 | facebook_profile | Facebook public profile data | profile_id |
 
 ---
-See [serpapi.com/pricing](https://serpapi.com/pricing) for details on credit costs. Light endpoint names and usage are covered in [SKILL.md](../SKILL.md).
+Full online engine catalog: [serpapi.com/search-engine-apis](https://serpapi.com/search-engine-apis) · Pricing: [serpapi.com/pricing](https://serpapi.com/pricing) · Usage covered in [SKILL.md](../SKILL.md).
 
