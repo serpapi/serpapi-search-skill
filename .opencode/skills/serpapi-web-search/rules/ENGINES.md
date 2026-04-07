@@ -19,7 +19,7 @@ SerpApi offers `_light` variants of popular engines. Prefer them — they're fas
 
 ## Result Keys
 
-Each engine returns results under a specific top-level key. See [rules/response.md](rules/response.md) for the full mapping.
+Each engine returns results under a specific top-level key. See [response.md](response.md) for the full mapping.
 
 ## Google (74 engines)
 
@@ -195,5 +195,5 @@ Each engine returns results under a specific top-level key. See [rules/response.
 | facebook_profile | Facebook public profile data | profile_id |
 
 ---
-See [serpapi.com/pricing](https://serpapi.com/pricing) for details on credit costs. Light endpoint names and usage are covered in [SKILL.md](../../skills/serpapi-web-search/SKILL.md).
+See [serpapi.com/pricing](https://serpapi.com/pricing) for details on credit costs. Light endpoint names and usage are covered in [SKILL.md](../SKILL.md).
 
