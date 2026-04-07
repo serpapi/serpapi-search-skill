@@ -2,6 +2,25 @@
 
 Complete list of 107 SerpApi search engines. Use the `engine` parameter to select the desired search engine.
 
+## Light vs Full Engines
+
+SerpApi offers `_light` variants of popular engines. Prefer them — they're faster, cheaper, and return essential data. Use the full engine when you need knowledge graph entries, local packs, or featured snippets.
+
+**Light engines:**
+
+| Engine | Full Equivalent |
+|:---|:---|
+| `google_light` | `google` |
+| `google_news_light` | `google_news` |
+| `google_images_light` | `google_images` |
+| `google_shopping_light` | `google_shopping` |
+| `google_videos_light` | `google_videos` |
+| `duckduckgo_light` | `duckduckgo` |
+
+## Result Keys
+
+Each engine returns results under a specific top-level key. See [rules/response.md](rules/response.md) for the full mapping.
+
 ## Google (74 engines)
 
 | Engine | Description | Key Parameters |

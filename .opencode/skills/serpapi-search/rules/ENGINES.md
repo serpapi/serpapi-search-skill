@@ -2,6 +2,25 @@
 
 Complete list of 107 SerpApi search engines. Use the `engine` parameter to select the desired search engine.
 
+## Light vs Full Engines
+
+SerpApi offers `_light` variants of popular engines. Prefer them — they're faster, cheaper, and return essential data. Use the full engine when you need knowledge graph entries, local packs, or featured snippets.
+
+**Light engines:**
+
+| Engine | Full Equivalent |
+|:---|:---|
+| `google_light` | `google` |
+| `google_news_light` | `google_news` |
+| `google_images_light` | `google_images` |
+| `google_shopping_light` | `google_shopping` |
+| `google_videos_light` | `google_videos` |
+| `duckduckgo_light` | `duckduckgo` |
+
+## Result Keys
+
+Each engine returns results under a specific top-level key. See [rules/response.md](rules/response.md) for the full mapping.
+
 ## Google (74 engines)
 
 | Engine | Description | Key Parameters |
@@ -72,7 +91,7 @@ Complete list of 107 SerpApi search engines. Use the `engine` parameter to selec
 | google_travel | Google Travel results | q, gl, hl |
 | google_travel_explore | Google Travel Explore destinations | travel_type, destination |
 
-## Bing (7 engines)
+## Bing (9 engines)
 
 | Engine | Description | Key Parameters |
 |--------|-------------|----------------|
@@ -86,7 +105,7 @@ Complete list of 107 SerpApi search engines. Use the `engine` parameter to selec
 | bing_product | Bing Product results | product_id, mkt |
 | bing_reverse_image | Bing reverse image search | image_url, cc, mkt |
 
-## DuckDuckGo (5 engines)
+## DuckDuckGo (4 engines)
 
 | Engine | Description | Key Parameters |
 |--------|-------------|----------------|
@@ -95,7 +114,7 @@ Complete list of 107 SerpApi search engines. Use the `engine` parameter to selec
 | duckduckgo_maps | DuckDuckGo Maps results | q, kl, l, lat, lon |
 | duckduckgo_news | DuckDuckGo News results | q, kl, l, df |
 
-## Yahoo, Yandex, Baidu, Naver (11 engines)
+## Yahoo, Yandex, Baidu, Naver (15 engines)
 
 | Engine | Description | Key Parameters |
 |--------|-------------|----------------|
@@ -133,7 +152,7 @@ Complete list of 107 SerpApi search engines. Use the `engine` parameter to selec
 | home_depot_product | Home Depot product details | product_id |
 | home_depot_product_reviews | Home Depot product reviews | product_id, page |
 
-## Travel & Local (6 engines)
+## Travel & Local (7 engines)
 
 | Engine | Description | Key Parameters |
 |--------|-------------|----------------|
@@ -145,7 +164,7 @@ Complete list of 107 SerpApi search engines. Use the `engine` parameter to selec
 | opentable | OpenTable results | q, metroId |
 | open_table_reviews | OpenTable reviews | restaurant_id |
 
-## Media (4 engines)
+## Media (9 engines)
 
 | Engine | Description | Key Parameters |
 |--------|-------------|----------------|
@@ -175,21 +194,6 @@ Complete list of 107 SerpApi search engines. Use the `engine` parameter to selec
 |--------|-------------|----------------|
 | facebook_profile | Facebook public profile data | profile_id |
 
-## Light Endpoints (Optimized for Speed)
-
-These engines provide faster responses with essential data. Use by default when speed is a priority.
-
-| Engine | Description | Key Parameters |
-|--------|-------------|----------------|
-| google_light | Core Google search | q, location, gl, hl |
-| google_images_light | Google Images | q, location, gl, hl |
-| google_news_light | Google News | q, gl, hl |
-| google_shopping_light | Google Shopping | q, location, gl, hl |
-| google_videos_light | Google Videos | q, location, gl, hl |
-| duckduckgo_light | DuckDuckGo search | q, kl, l |
-
-*Note: Faster response, lower cost, essential data. Use by default.*
-
 ---
-See [serpapi.com/pricing](https://serpapi.com/pricing) for details on credit costs.
+See [serpapi.com/pricing](https://serpapi.com/pricing) for details on credit costs. Light endpoint names and usage are covered in [SKILL.md](../../skills/serpapi-search/SKILL.md#light-endpoints).
 

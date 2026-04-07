@@ -10,20 +10,34 @@ Search the web, news, images, shopping, videos, maps, flights, hotels, jobs, and
 
 1.  Get your API key from the [SerpApi Dashboard](https://serpapi.com/dashboard).
 2.  Set the environment variable: `export SERPAPI_KEY=your_key_here`
-3.  Install the skill to your agent (see [Installation](#installation) below).
-4.  Start searching! See [SKILL.md](skills/serpapi-search/SKILL.md) for usage examples.
+3.  Install the skill:
+    ```bash
+    npx skills add serpapi/serpapi-search-skill
+    ```
+4.  Start searching! See [SKILL.md](skills/serpapi-search/SKILL.md) for usage.
 
 ## What's Included
 
-- [SKILL.md](skills/serpapi-search/SKILL.md): Core skill definition and usage guide.
-- [ENGINES.md](skills/serpapi-search/references/ENGINES.md): Catalog of 100+ supported search engines.
+- [SKILL.md](skills/serpapi-search/SKILL.md): Core skill definition (routing document).
+- [rules/ENGINES.md](skills/serpapi-search/rules/ENGINES.md): Catalog of 100+ supported search engines.
+- [rules/parameters.md](skills/serpapi-search/rules/parameters.md): All query parameters with examples.
+- [rules/response.md](skills/serpapi-search/rules/response.md): Response format and result key reference.
+- [rules/examples.md](skills/serpapi-search/rules/examples.md): curl examples for common search types.
 - [api-key-setup.md](docs/api-key-setup.md): Detailed configuration guide for all agents.
 - [AGENTS.md](AGENTS.md): Discovery file for agent integration.
 - [LICENSE](LICENSE): MIT License terms.
 
 ## Installation
 
-Pick the installation method for your agent.
+The easiest way to install across all your agents at once:
+
+```bash
+npx skills add serpapi/serpapi-search-skill
+```
+
+This installs via the [skills CLI](https://github.com/vercel-labs/skills) and supports Claude Code, Cursor, Codex, OpenCode, Windsurf, and [40+ more agents](https://github.com/vercel-labs/skills#supported-agents).
+
+For agent-specific or manual installation:
 
 ### Claude Code
 ```bash
@@ -139,7 +153,7 @@ Search across 100+ platforms including Google, Bing, DuckDuckGo, YouTube, and Am
 - `google_videos_light`: Video search.
 - `duckduckgo_light`: Privacy-focused web results.
 
-See [ENGINES.md](skills/serpapi-search/references/ENGINES.md) for the full list of 107 engines.
+See [rules/ENGINES.md](skills/serpapi-search/rules/ENGINES.md) for the full list of 107 engines.
 
 ## Links
 
