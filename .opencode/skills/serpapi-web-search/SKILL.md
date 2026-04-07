@@ -64,7 +64,6 @@ Pick the engine that matches the user's intent:
 | Academic / research | `google_scholar` |
 | Local / maps | `google_maps` |
 | Video | `youtube` |
-
 | SerpApi's own index (alpha, no Google/Bing) | `search_index` |
 
 Prefer `_light` variants — they're faster and cheaper. Use the full engine only when you need knowledge graph, local pack, or featured snippets.
