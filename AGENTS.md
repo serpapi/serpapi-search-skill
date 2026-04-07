@@ -8,7 +8,7 @@ Universal web search across 100+ search engines and result types.
 
 ## Overview
 
-Documentation-only skill package for AI coding agents. No executable code — the deliverable is Markdown files that agents consume. Powered by [SerpApi](https://serpapi.com) REST API via `serpapi_search` MCP tool, direct `curl`, or the [serpapi CLI](https://github.com/serpapi/serpapi-cli).
+Documentation-only skill package for AI coding agents. No executable code — the deliverable is Markdown files that agents consume. Powered by [SerpApi](https://serpapi.com) REST API via `serpapi_search` MCP tool, the [serpapi CLI](https://github.com/serpapi/serpapi-cli) (preferred), official SDKs, or `curl`.
 
 ## Structure
 
@@ -24,9 +24,10 @@ Documentation-only skill package for AI coding agents. No executable code — th
     ├── serpapi.yaml                             # Network policy preset
     └── rules/
         ├── ENGINES.md                           # Full catalog of 107 search engines
-        ├── examples.md                          # curl examples for common search types
+        ├── examples.md                          # CLI examples for common search types
         ├── parameters.md                        # All query parameters with examples
-        └── response.md                          # Response format and result key reference
+        ├── response.md                          # Response format and result key reference
+        └── sdks.md                              # SDK quickstart: Python, JS, Go, Ruby, PHP, Java, .NET
 ```
 
 Hidden (not tracked in git):
@@ -37,6 +38,7 @@ Hidden (not tracked in git):
 
 | Task | Location | Notes |
 |------|----------|-------|
+| Add SDK quickstart | `skills/serpapi-web-search/rules/sdks.md` | Python, JS, Go, Ruby, PHP, Java, .NET |
 | Edit skill behavior/examples | `skills/serpapi-web-search/SKILL.md` | Canonical agent-facing artifact |
 | Add/update search engines | `skills/serpapi-web-search/rules/ENGINES.md` | 107 engines in categorized tables |
 | Change API key instructions | `docs/api-key-setup.md` | Per-agent setup (Claude Code, Cursor, etc.) |
@@ -48,6 +50,8 @@ Hidden (not tracked in git):
 - **Default engine**: `google_light` — always recommend Light endpoints first for speed/cost.
 - **API key placeholder**: Use `your_key_here` consistently (never hardcode real keys).
 - **Env var name**: `SERPAPI_KEY` — standardized across all docs and examples.
+- **Invocation order**: MCP tool (`serpapi_search`) → serpapi-cli → SDK (if writing code) → curl (last resort).
+- **serpapi-cli agent tips**: Use `--fields` for server-side filtering (reduces API payload), `--jq` for client-side filtering. Combine both for minimum token usage.
 - **curl examples**: All use `${SERPAPI_KEY}` variable reference.
 - **SKILL.md frontmatter**: YAML block with `name`, `description`, `license` fields.
 - **No executable code**: This repo is pure Markdown. No scripts, no tests, no build step.
