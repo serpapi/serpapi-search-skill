@@ -1,5 +1,5 @@
 ---
-name: serpapi-search
+name: serpapi-web-search
 description: >-
   Search the web using SerpApi's 100+ search engines. Use this skill whenever
   the user needs current or web-sourced information: researching a topic,

@@ -3,7 +3,7 @@
 Universal web search across 100+ search engines and result types.
 
 <available-skills>
-  <skill name="serpapi-search" description="Search the web, news, images, shopping, videos, maps, flights, hotels, jobs, and more using SerpApi's 100+ search engines. Supports Google, Bing, DuckDuckGo, Yahoo, YouTube, Amazon, and dozens more. Use google_light as default for fast results." path="skills/serpapi-search/SKILL.md" />
+  <skill name="serpapi-web-search" description="Search the web, news, images, shopping, videos, maps, flights, hotels, jobs, and more using SerpApi's 100+ search engines. Supports Google, Bing, DuckDuckGo, Yahoo, YouTube, Amazon, and dozens more. Use google_light as default for fast results." path="skills/serpapi-web-search/SKILL.md" />
 </available-skills>
 
 ## Overview
@@ -19,7 +19,7 @@ Documentation-only skill package for AI coding agents. No executable code — th
 ├── LICENSE                                      # MIT
 ├── docs/
 │   └── api-key-setup.md                         # SERPAPI_KEY config per agent + CI/CD
-└── skills/serpapi-search/
+└── skills/serpapi-web-search/
     ├── SKILL.md                                 # Core skill definition (frontmatter + usage)
     └── references/
         └── ENGINES.md                           # Full catalog of 107 search engines
@@ -33,8 +33,8 @@ Hidden (not tracked in git):
 
 | Task | Location | Notes |
 |------|----------|-------|
-| Edit skill behavior/examples | `skills/serpapi-search/SKILL.md` | Canonical agent-facing artifact |
-| Add/update search engines | `skills/serpapi-search/rules/ENGINES.md` | 107 engines in categorized tables |
+| Edit skill behavior/examples | `skills/serpapi-web-search/SKILL.md` | Canonical agent-facing artifact |
+| Add/update search engines | `skills/serpapi-web-search/rules/ENGINES.md` | 107 engines in categorized tables |
 | Change API key instructions | `docs/api-key-setup.md` | Per-agent setup (Claude Code, Cursor, etc.) |
 | Update install instructions | `README.md` | 7 agent platforms + universal curl |
 | Skill discovery metadata | `AGENTS.md` (this file) | `<available-skills>` XML block |
@@ -70,7 +70,7 @@ grep -ohE '\(([^)]+\.md[^)]*)\)' *.md docs/*.md skills/**/*.md | tr -d '()' | so
 ## Notes
 
 - **macOS gotcha**: `grep -P` (Perl regex) unavailable on Darwin — use `grep -E` or `sed` instead.
-- **Link paths in AGENTS.md**: Must be relative to repo root (not to the file's parent). Previously had a broken `references/ENGINES.md` link — fixed to `skills/serpapi-search/rules/ENGINES.md`.
+- **Link paths in AGENTS.md**: Must be relative to repo root (not to the file's parent). Previously had a broken `references/ENGINES.md` link — fixed to `skills/serpapi-web-search/rules/ENGINES.md`.
 - **OpenCode packaging**: `.opencode/` contains a bundled copy of the skill + `@opencode-ai/plugin` dependency. This is separate from the canonical `skills/` directory.
 - **Git history**: 5 atomic commits on `master`. No branches, no CI pipeline.
 - **Submissions**: Skill is publishable to agentskills.guide, SkillMD.ai, skills.rest, and ClawHub. See `.sisyphus/evidence/task-11-submissions.md` for submission details.

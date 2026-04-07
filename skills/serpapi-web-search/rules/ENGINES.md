@@ -195,5 +195,5 @@ Each engine returns results under a specific top-level key. See [rules/response.
 | facebook_profile | Facebook public profile data | profile_id |
 
 ---
-See [serpapi.com/pricing](https://serpapi.com/pricing) for details on credit costs. Light endpoint names and usage are covered in [SKILL.md](../../skills/serpapi-search/SKILL.md#light-endpoints).
+See [serpapi.com/pricing](https://serpapi.com/pricing) for details on credit costs. Light endpoint names and usage are covered in [SKILL.md](../../skills/serpapi-web-search/SKILL.md).
 

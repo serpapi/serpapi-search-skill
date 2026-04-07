@@ -12,17 +12,17 @@ Search the web, news, images, shopping, videos, maps, flights, hotels, jobs, and
 2.  Set the environment variable: `export SERPAPI_KEY=your_key_here`
 3.  Install the skill:
     ```bash
-    npx skills add serpapi/serpapi-search-skill
+    npx skills add serpapi/skills
     ```
-4.  Start searching! See [SKILL.md](skills/serpapi-search/SKILL.md) for usage.
+4.  Start searching! See [SKILL.md](skills/serpapi-web-search/SKILL.md) for usage.
 
 ## What's Included
 
-- [SKILL.md](skills/serpapi-search/SKILL.md): Core skill definition (routing document).
-- [rules/ENGINES.md](skills/serpapi-search/rules/ENGINES.md): Catalog of 100+ supported search engines.
-- [rules/parameters.md](skills/serpapi-search/rules/parameters.md): All query parameters with examples.
-- [rules/response.md](skills/serpapi-search/rules/response.md): Response format and result key reference.
-- [rules/examples.md](skills/serpapi-search/rules/examples.md): curl examples for common search types.
+- [SKILL.md](skills/serpapi-web-search/SKILL.md): Core skill definition (routing document).
+- [rules/ENGINES.md](skills/serpapi-web-search/rules/ENGINES.md): Catalog of 100+ supported search engines.
+- [rules/parameters.md](skills/serpapi-web-search/rules/parameters.md): All query parameters with examples.
+- [rules/response.md](skills/serpapi-web-search/rules/response.md): Response format and result key reference.
+- [rules/examples.md](skills/serpapi-web-search/rules/examples.md): curl examples for common search types.
 - [api-key-setup.md](docs/api-key-setup.md): Detailed configuration guide for all agents.
 - [AGENTS.md](AGENTS.md): Discovery file for agent integration.
 - [LICENSE](LICENSE): MIT License terms.
@@ -32,7 +32,7 @@ Search the web, news, images, shopping, videos, maps, flights, hotels, jobs, and
 The easiest way to install across all your agents at once:
 
 ```bash
-npx skills add serpapi/serpapi-search-skill
+npx skills add serpapi/skills
 ```
 
 This installs via the [skills CLI](https://github.com/vercel-labs/skills) and supports Claude Code, Cursor, Codex, OpenCode, Windsurf, and [40+ more agents](https://github.com/vercel-labs/skills#supported-agents).
@@ -41,33 +41,33 @@ For agent-specific or manual installation:
 
 ### Claude Code
 ```bash
-git clone https://github.com/serpapi/serpapi-search-skill.git
+git clone https://github.com/serpapi/skills.git
 # Global install (available to all projects):
-cp -r serpapi-search-skill/skills/serpapi-search ~/.claude/skills/
+cp -r skills/serpapi-web-search ~/.claude/skills/
 # Project-scoped install:
-cp -r serpapi-search-skill/skills/serpapi-search .claude/skills/
+cp -r skills/serpapi-web-search .claude/skills/
 ```
 See [api-key-setup.md](docs/api-key-setup.md#claude-code) for MCP configuration.
 
 ### Cursor
 ```bash
-cp -r skills/serpapi-search .cursor/skills/
+cp -r skills/serpapi-web-search .cursor/skills/
 ```
 Or use the Remote Rules URL pointing to your repository's `SKILL.md`.
 
 ### Codex
 ```bash
-cp -r skills/serpapi-search .agents/skills/
+cp -r skills/serpapi-web-search .agents/skills/
 ```
 
 ### Windsurf
 ```bash
-cp -r skills/serpapi-search .windsurf/skills/
+cp -r skills/serpapi-web-search .windsurf/skills/
 ```
 
 ### OpenClaw
 ```bash
-cp -r skills/serpapi-search ~/.openclaw/skills/
+cp -r skills/serpapi-web-search ~/.openclaw/skills/
 ```
 
 ### NemoClaw (inside sandbox)
@@ -78,13 +78,13 @@ go install github.com/serpapi/serpapi-cli/cmd/serpapi@latest
 export SERPAPI_KEY=your_key_here
 
 # 2. Copy the skill into the workspace
-cp -r skills/serpapi-search skills/serpapi-search
+cp -r skills/serpapi-web-search skills/serpapi-web-search
 
 # 3. Apply the network policy
-openshell policy set skills/serpapi-search/serpapi.yaml
+openshell policy set skills/serpapi-web-search/serpapi.yaml
 
 # 4. Add to ~/.openclaw/openclaw.json
-# { "skills": { "entries": { "serpapi-search": { "enabled": true,
+# { "skills": { "entries": { "serpapi-web-search": { "enabled": true,
 #   "apiKey": { "source": "env", "provider": "default", "id": "SERPAPI_KEY" } } } } }
 
 # 5. Make permanent
@@ -94,17 +94,17 @@ nemoclaw onboard
 Or paste this into any AI assistant with access to your NemoClaw workspace:
 
 ```
-Fetch https://raw.githubusercontent.com/serpapi/serpapi-search-skill/main/skills/serpapi-search/SKILL.md
-and save it to skills/serpapi-search/SKILL.md.
+Fetch https://raw.githubusercontent.com/serpapi/skills/main/skills/serpapi-web-search/SKILL.md
+and save it to skills/serpapi-web-search/SKILL.md.
 
-Fetch https://raw.githubusercontent.com/serpapi/serpapi-search-skill/main/skills/serpapi-search/serpapi.yaml
+Fetch https://raw.githubusercontent.com/serpapi/skills/main/skills/serpapi-web-search/serpapi.yaml
 and save it to nemoclaw-blueprint/policies/presets/serpapi.yaml.
 
 Add this to ~/.openclaw/openclaw.json (home directory, not workspace):
 {
   "skills": {
     "entries": {
-      "serpapi-search": {
+      "serpapi-web-search": {
         "enabled": true,
         "apiKey": { "source": "env", "provider": "default", "id": "SERPAPI_KEY" }
       }
@@ -117,14 +117,14 @@ Then run: nemoclaw onboard
 
 ### OpenCode
 ```bash
-cp -r skills/serpapi-search .opencode/skills/
+cp -r skills/serpapi-web-search .opencode/skills/
 ```
 OpenCode also automatically reads skills from `.claude/skills/` and `.agents/skills/`.
 
 ### Universal (curl)
 Download the skill definition directly to any directory:
 ```bash
-curl -O https://raw.githubusercontent.com/serpapi/serpapi-search-skill/main/skills/serpapi-search/SKILL.md
+curl -O https://raw.githubusercontent.com/serpapi/skills/main/skills/serpapi-web-search/SKILL.md
 ```
 
 ### serpapi CLI
@@ -153,7 +153,7 @@ Search across 100+ platforms including Google, Bing, DuckDuckGo, YouTube, and Am
 - `google_videos_light`: Video search.
 - `duckduckgo_light`: Privacy-focused web results.
 
-See [rules/ENGINES.md](skills/serpapi-search/rules/ENGINES.md) for the full list of 107 engines.
+See [rules/ENGINES.md](skills/serpapi-web-search/rules/ENGINES.md) for the full list of 107 engines.
 
 ## Links
 
