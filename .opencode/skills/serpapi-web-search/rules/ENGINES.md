@@ -188,6 +188,20 @@ Each engine returns results under a specific top-level key. See [response.md](re
 | google_patents | Google Patents results | q, patent_number |
 | google_patents_details | Patent details | patent_id |
 
+## SerpApi Search Index (Alpha)
+
+SerpApi's own first-party search index — not a scraper of Google/Bing. Results come directly from SerpApi's crawled index.
+
+| Engine | Description | Key Parameters |
+|--------|-------------|----------------|
+| `search_index` | SerpApi's own web search index (alpha) | `q` |
+
+CLI: `serpapi search engine=search_index q="your query"`  
+HTTP: `GET https://serpapi.com/search.json?engine=search_index&q=...&api_key=...`  
+Docs: [serpapi.com/search-index-api](https://serpapi.com/search-index-api)
+
+> **Note:** Alpha — response format and ranking may change.
+
 ## Other
 
 | Engine | Description | Key Parameters |
