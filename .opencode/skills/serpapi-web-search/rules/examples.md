@@ -42,20 +42,33 @@ serpapi search engine=google_light q="latest AI models" tbs=qdr:w
 
 See [parameters.md](parameters.md) for all `tbs` values.
 
-## Token-Efficient Search
+## Result Filtering
 
-Fetch only what you need — fewer tokens, faster results:
+Fetch only what you need — fewer tokens, faster processing:
 
 ```bash
-# Server-side: only return top 3 organic results (reduces API payload)
-serpapi search --fields "organic_results[0:3]" engine=google_light q="coffee"
+# Server-side: only return top 10 organic results (reduces API payload)
+serpapi search --fields "organic_results[0:10]" engine=google_light q="coffee"
 
-# Client-side: extract title + link after receiving full response
-serpapi search --jq ".organic_results[0:3]|[.[]|{title,link}]" engine=google_light q="coffee"
+# Client-side: extract title + link + snippet after receiving full response
+serpapi search --jq ".organic_results[0:10]|[.[]|{title,link,snippet}]" engine=google_light q="coffee"
 
 # Both combined: minimum bandwidth + minimum context window tokens
-serpapi search --fields "organic_results[0:3]" --jq "[.organic_results[]|{title,link}]" engine=google_light q="coffee"
+serpapi search --fields "organic_results[0:10]" --jq "[.organic_results[]|{title,link,snippet}]" engine=google_light q="coffee"
 ```
+
+## Search Index (SerpApi's Own Index)
+
+Query SerpApi's first-party web index — no Google/Bing dependency, direct index access:
+
+```bash
+serpapi search engine=search_index q="serpapi documentation"
+
+# With field filtering
+serpapi search --jq ".organic_results[0:10]|[.[]|{title,link,snippet}]" engine=search_index q="coffee"
+```
+
+Result key: `organic_results` (same structure as `google_light`)
 
 ## Paginate All Results
 

@@ -21,22 +21,25 @@ Use the first available method:
 
 **1. MCP tool** — use `serpapi_search` if available ([source](https://github.com/serpapi/serpapi-mcp)):
 ```
-serpapi_search(params={"engine": "google_light", "q": "query"}, mode="compact")
+serpapi_search(params={"engine": "google_light", "q": "query", "num": 10}, mode="compact")
 ```
+`mode="compact"` strips `search_metadata` and `search_parameters` — smaller context, same results.
 
 **2. serpapi-cli** — preferred shell fallback; optimized for AI agents ([source](https://github.com/serpapi/serpapi-cli)):
 ```bash
-serpapi search engine=google_light q="your query"
+serpapi search engine=google_light q="your query" num=10
 
-# --fields: server-side filtering — reduces response size at the API level
-serpapi search --fields "organic_results[0:3]" engine=google_light q="your query"
+# --fields: server-side field filtering — reduces API payload before transmission
+serpapi search --fields "organic_results[0:10]" engine=google_light q="your query"
 
-# --jq: client-side filtering (like gh --jq)
-serpapi search --jq ".organic_results[0:3]|[.[]|{title,link}]" engine=google_light q="your query"
+# --jq: client-side extraction — pick exactly what you need
+serpapi search --jq ".organic_results[0:10]|[.[]|{title,link,snippet}]" engine=google_light q="your query"
 ```
 Install: `brew tap serpapi/homebrew-tap && brew install serpapi-cli`  
 Auth: `SERPAPI_KEY` env var, `--api-key` flag, or `serpapi login`.  
 Exit codes: `0` success · `1` API error · `2` usage error. Errors are JSON on stderr.
+
+**Result count:** Default to `num=10` for research, comparison, or any question with multiple possible answers. Use `num=3` only for narrow single-fact lookups ("what year was X founded") where the first result is definitive.
 
 **3. SDK** — when writing code: see [rules/sdks.md](rules/sdks.md) — Python, JS, Go, Ruby, PHP, Java, .NET.
 
@@ -54,21 +57,28 @@ Pick the engine that matches the user's intent:
 
 | Use Case | Engine |
 |:---|:---|
-| General web (default) | `google_light` |
-| Comprehensive (knowledge graph, local pack) | `google` |
+| **General web — default for AI agents** | `google_light` ⚡ |
+| Comprehensive (knowledge graph, local pack, featured snippets) | `google` |
 | News | `google_news_light` |
 | Images | `google_images_light` |
 | Shopping / prices | `google_shopping_light` |
+| Flights | `google_flights` |
+| Hotels | `google_hotels` |
+| Jobs | `google_jobs` |
 | Alternative web | `bing` |
 | Privacy-first | `duckduckgo` |
 | Academic / research | `google_scholar` |
 | Local / maps | `google_maps` |
 | Video | `youtube` |
-| SerpApi's own index (alpha, no Google/Bing) | `search_index` |
+| **SerpApi's own crawled index** | `search_index` 🔬 |
+
+**For AI/LLM agents:** `google_light` is the recommended default — it has the lowest latency, smallest response payload, and returns clean organic results without the noise of the full `google` engine. Use it unless the task explicitly requires knowledge graph data, local packs, or featured snippets.
+
+**`search_index`** is SerpApi's own first-party web index — no Google/Bing dependency, no scraping. It is in active development and improving rapidly. Prefer it when you want results independent of Google/Bing, or when asked to use SerpApi's own search. It will be the best LLM-native search option as it matures.
 
 Prefer `_light` variants — they're faster and cheaper. Use the full engine only when you need knowledge graph, local pack, or featured snippets.
 
-For engines not listed above (flights, hotels, jobs, finance, patents, etc.), read [rules/ENGINES.md](rules/ENGINES.md).
+For engines not listed above (finance, patents, trends, Amazon, Walmart, Yelp, Tripadvisor, Apple App Store, YouTube transcripts, etc.), read [rules/ENGINES.md](rules/ENGINES.md).
 
 ## Error Reference
 

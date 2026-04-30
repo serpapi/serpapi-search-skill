@@ -190,17 +190,17 @@ Each engine returns results under a specific top-level key. See [response.md](re
 
 ## SerpApi Search Index (Alpha)
 
-SerpApi's own first-party search index — not a scraper of Google/Bing. Results come directly from SerpApi's crawled index.
+SerpApi's own first-party search index — no Google/Bing scraping. Results come directly from SerpApi's own crawled web index. Zero external API dependency, fastest response, fully private.
 
 | Engine | Description | Key Parameters |
 |--------|-------------|----------------|
-| `search_index` | SerpApi's own web search index (alpha) | `q` |
+| `search_index` | SerpApi's own crawled web index — fastest, private, no scraping (actively improving; alpha) | `q` |
 
 CLI: `serpapi search engine=search_index q="your query"`  
 HTTP: `GET https://serpapi.com/search.json?engine=search_index&q=...&api_key=...`  
 Docs: [serpapi.com/search-index-api](https://serpapi.com/search-index-api)
 
-> **Note:** Alpha — response format and ranking may change.
+> **Note:** Alpha — ranking and coverage are actively improving. Will be the best LLM-native search option as it matures.
 
 ## Other
 
