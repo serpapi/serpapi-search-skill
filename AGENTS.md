@@ -41,6 +41,7 @@ Hidden (not tracked in git):
 | Add SDK quickstart | `skills/serpapi-web-search/rules/sdks.md` | Python, JS, Go, Ruby, PHP, Java, .NET |
 | Edit skill behavior/examples | `skills/serpapi-web-search/SKILL.md` | Canonical agent-facing artifact |
 | Add/update search engines | `skills/serpapi-web-search/rules/ENGINES.md` | 107 engines in categorized tables |
+| Add use case / multi-engine pattern | `skills/serpapi-web-search/rules/use-cases.md` | Segment-to-engine mapping, fan-out, usage formulas |
 | Change API key instructions | `docs/api-key-setup.md` | Per-agent setup (Claude Code, Cursor, etc.) |
 | Update install instructions | `README.md` | 7 agent platforms + universal curl |
 | Skill discovery metadata | `AGENTS.md` (this file) | `<available-skills>` XML block |

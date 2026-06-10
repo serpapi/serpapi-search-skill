@@ -9,8 +9,7 @@ description: >-
   to google_light for speed. Supports Google, Bing, DuckDuckGo, YouTube,
   Amazon, Maps, Scholar, and more.
 compatibility: >-
-  Requires one of: a native serpapi_search tool; or the serpapi CLI (brew tap
-  serpapi/homebrew-tap && brew install serpapi-cli); or an SDK; or outbound network
+  Requires one of: a native serpapi_search tool; or the serpapi CLI (brew install serpapi/tap/serpapi-cli); or an SDK; or outbound network
   access with curl. All paths require a SERPAPI_KEY.
 license: MIT
 ---
@@ -35,7 +34,7 @@ serpapi search --fields "organic_results[0:10]" engine=google_light q="your quer
 # --jq: client-side extraction — pick exactly what you need
 serpapi search --jq ".organic_results[0:10]|[.[]|{title,link,snippet}]" engine=google_light q="your query"
 ```
-Install: `brew tap serpapi/homebrew-tap && brew install serpapi-cli`  
+Install: `brew install serpapi/tap/serpapi-cli`  
 Auth: `SERPAPI_KEY` env var, `--api-key` flag, or `serpapi login`.  
 Exit codes: `0` success · `1` API error · `2` usage error. Errors are JSON on stderr.
 
@@ -108,3 +107,4 @@ Read these files when you need more detail:
 - **Examples** (news, shopping, time-filtered, Bing): [rules/examples.md](rules/examples.md)
 - **SDKs** (Python, JS, Go, Ruby, PHP, Java, .NET): [rules/sdks.md](rules/sdks.md)
 - **All 100+ engines** (flights, hotels, jobs, finance, patents…): [rules/ENGINES.md](rules/ENGINES.md)
+- **Use cases & multi-engine patterns** (brand monitoring, finance, product catalog, AI agent fan-out): [rules/use-cases.md](rules/use-cases.md)
