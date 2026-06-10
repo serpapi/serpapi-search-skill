@@ -27,18 +27,13 @@ serpapi_search(params={"engine": "google_light", "q": "query", "num": 10}, mode=
 **2. serpapi-cli** — preferred shell fallback; optimized for AI agents ([source](https://github.com/serpapi/serpapi-cli)):
 ```bash
 serpapi search engine=google_light q="your query" num=10
-
-# --fields: server-side field filtering — reduces API payload before transmission
-serpapi search --fields "organic_results[0:10]" engine=google_light q="your query"
-
-# --jq: client-side extraction — pick exactly what you need
-serpapi search --jq ".organic_results[0:10]|[.[]|{title,link,snippet}]" engine=google_light q="your query"
 ```
-Install: `brew install serpapi/tap/serpapi-cli`  
-Auth: `SERPAPI_KEY` env var, `--api-key` flag, or `serpapi login`.  
+Install: `brew install serpapi/tap/serpapi-cli`
+Auth: `SERPAPI_KEY` env var, `--api-key` flag, or `serpapi login`.
 Exit codes: `0` success · `1` API error · `2` usage error. Errors are JSON on stderr.
+For `--fields` / `--jq` filtering: see [rules/examples.md](rules/examples.md).
 
-**Result count:** Default to `num=10` for research, comparison, or any question with multiple possible answers. Use `num=3` only for narrow single-fact lookups ("what year was X founded") where the first result is definitive.
+**Result count:** Default to `num=10`. Use `num=3` only for narrow single-fact lookups.
 
 **3. SDK** — when writing code: see [rules/sdks.md](rules/sdks.md) — Python, JS, Go, Ruby, PHP, Java, .NET.
 

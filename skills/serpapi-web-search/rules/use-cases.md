@@ -8,7 +8,7 @@ Common use cases, the engine stacks that serve them, and parallel query patterns
 |---|---|---|
 | AI agent / general web research | `google_light` | `google_news_light`, `google_ai_overview` |
 | Brand / AEO monitoring | `google_ai_overview` | `google_light`, `google_news_light` |
-| Competitive ad intelligence | `google` | `google_shopping_light` |
+| Competitive ad intelligence | `google_ads` | `google_shopping_light` |
 | Product pricing / catalog | `google_shopping_light` | `google_light`, `amazon` |
 | Compliance / risk / KYC | `google_news_light` | `google_light`, `google_maps` |
 | Financial / ticker data | `google_finance` | `google_light`, `google_news_light`, `google_trends` |
@@ -32,13 +32,17 @@ client = serpapi.Client(api_key="your_key_here")
 async def search(params):
     return await asyncio.to_thread(client.search, params)
 
-# Brand risk monitoring: 3 surfaces in parallel
-results = await asyncio.gather(
-    search({"engine": "google_news_light", "q": '"Acme Corp" (lawsuit OR breach OR recall)'}),
-    search({"engine": "google_light",      "q": 'site:sec.gov "Acme Corp"'}),
-    search({"engine": "google_maps",       "q": "Acme Corp headquarters"}),
-)
-news, web, maps = results
+async def main():
+    # Brand risk monitoring: 3 surfaces in parallel
+    results = await asyncio.gather(
+        search({"engine": "google_news_light", "q": '"Acme Corp" (lawsuit OR breach OR recall)'}),
+        search({"engine": "google_light",      "q": 'site:sec.gov "Acme Corp"'}),
+        search({"engine": "google_maps",       "q": "Acme Corp headquarters"}),
+    )
+    news, web, maps = results
+    return news, web, maps
+
+asyncio.run(main())
 ```
 
 ```bash
@@ -80,7 +84,7 @@ cadence_multiplier:
 | Segment | Formula | Example |
 |---|---|---|
 | Ticker enrichment | tickers × engines × queries/ticker × monthly refreshes | 500 × 3 × 5 × 4 = 30,000/mo |
-| Brand monitoring | entities × query variants × cadence | 200 × 3 × 30 = 18,000/mo |
+| Brand monitoring | entities × query_variants × engines × cadence | 200 × 3 × 3 engines × 30 days = 54,000/mo |
 | Product catalog | SKUs × (organic + shopping) × refresh rate | 1,000 × 2 × 8 = 16,000/mo |
 | KYB verification | applications/mo × surfaces/entity | 500 × 4 = 2,000/mo |
 | AI agent (research) | sessions/day × fan-out × 30 | 100 × 15 × 30 = 45,000/mo |
@@ -113,19 +117,6 @@ serpapi search engine=google_maps q="Acme Auto Repair Austin TX"
 
 # Step 2: pull reviews using that data_id
 serpapi search engine=google_maps_reviews data_id="<data_id from step 1>"
-```
-
-## Result Merging
-
-After parallel calls, merge by relevance signal:
-
-```python
-def merge_results(web, news, maps):
-    return {
-        "web_top3":   web.get("organic_results", [])[:3],
-        "news_top3":  news.get("news_results", [])[:3],
-        "local_top1": maps.get("local_results", [])[:1],
-    }
 ```
 
 ---

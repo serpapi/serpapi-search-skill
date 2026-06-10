@@ -23,7 +23,7 @@ Documentation-only skill package for AI coding agents. No executable code — th
     ├── SKILL.md                                 # Core skill definition (frontmatter + usage)
     ├── serpapi.yaml                             # Network policy preset
     └── rules/
-        ├── ENGINES.md                           # Full catalog of 107 search engines
+        ├── ENGINES.md                           # Full catalog of 133 search engines
         ├── examples.md                          # CLI examples for common search types
         ├── parameters.md                        # All query parameters with examples
         ├── response.md                          # Response format and result key reference
@@ -40,7 +40,7 @@ Hidden (not tracked in git):
 |------|----------|-------|
 | Add SDK quickstart | `skills/serpapi-web-search/rules/sdks.md` | Python, JS, Go, Ruby, PHP, Java, .NET |
 | Edit skill behavior/examples | `skills/serpapi-web-search/SKILL.md` | Canonical agent-facing artifact |
-| Add/update search engines | `skills/serpapi-web-search/rules/ENGINES.md` | 107 engines in categorized tables |
+| Add/update search engines | `skills/serpapi-web-search/rules/ENGINES.md` | 133 engines in categorized tables |
 | Add use case / multi-engine pattern | `skills/serpapi-web-search/rules/use-cases.md` | Segment-to-engine mapping, fan-out, usage formulas |
 | Change API key instructions | `docs/api-key-setup.md` | Per-agent setup (Claude Code, Cursor, etc.) |
 | Update install instructions | `README.md` | 7 agent platforms + universal curl |
@@ -60,7 +60,7 @@ Hidden (not tracked in git):
 ## Anti-Patterns
 
 - **Never** commit real API keys or hex strings that look like keys.
-- **Never** reference competitor products (Brave, etc.) in any file.
+- **Never** reference competitor SERP scraping tools (e.g., Oxylabs, Scrapingbee) in any file.
 - **Never** add executable code — this is a docs-only skill package.
 - **Light vs Full**: Always default to Light engines. Only suggest full engine when user needs knowledge graph, local pack, or featured snippets.
 
@@ -81,5 +81,5 @@ grep -ohE '\(([^)]+\.md[^)]*)\)' *.md docs/*.md skills/**/*.md | tr -d '()' | so
 - **macOS gotcha**: `grep -P` (Perl regex) unavailable on Darwin — use `grep -E` or `sed` instead.
 - **Link paths in AGENTS.md**: Must be relative to repo root (not to the file's parent). Previously had a broken `references/ENGINES.md` link — fixed to `skills/serpapi-web-search/rules/ENGINES.md`.
 - **OpenCode packaging**: `.opencode/` contains a bundled copy of the skill + `@opencode-ai/plugin` dependency. This is separate from the canonical `skills/` directory.
-- **Git history**: 5 atomic commits on `master`. No branches, no CI pipeline.
+- **Git history**: atomic commits on `master`. No branches, no CI pipeline.
 - **Submissions**: Skill is publishable to agentskills.guide, SkillMD.ai, skills.rest, and ClawHub. See `.sisyphus/evidence/task-11-submissions.md` for submission details.

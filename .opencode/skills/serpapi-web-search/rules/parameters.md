@@ -7,7 +7,7 @@ All parameters for `GET https://serpapi.com/search.json`.
 | Parameter | Type | Description |
 |:---|:---|:---|
 | `engine` | string | The search engine to use (e.g., `google_light`). |
-| `q` | string | The search query. Note: `youtube` uses `search_query` instead. |
+| `q` | string | The search query. Required for most engines. Exceptions: `youtube` uses `search_query`; `amazon` uses `k`; `instagram_profile` uses `profile_id`; `google_maps_reviews` uses `data_id`. |
 | `api_key` | string | Your SerpApi API key. |
 
 ## Pagination

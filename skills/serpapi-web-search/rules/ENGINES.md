@@ -1,27 +1,8 @@
 # SerpApi Search Engines Catalog
 
-Complete list of 107 SerpApi search engines. Use the `engine` parameter to select the desired search engine.
+Complete list of 133 SerpApi search engines. Use the `engine` parameter to select the desired search engine. Prefer `_light` variants — they're faster and cheaper. See [response.md](response.md) for result keys by engine.
 
-## Light vs Full Engines
-
-SerpApi offers `_light` variants of popular engines. Prefer them — they're faster, cheaper, and return essential data. Use the full engine when you need knowledge graph entries, local packs, or featured snippets.
-
-**Light engines:**
-
-| Engine | Full Equivalent |
-|:---|:---|
-| `google_light` | `google` |
-| `google_news_light` | `google_news` |
-| `google_images_light` | `google_images` |
-| `google_shopping_light` | `google_shopping` |
-| `google_videos_light` | `google_videos` |
-| `duckduckgo_light` | `duckduckgo` |
-
-## Result Keys
-
-Each engine returns results under a specific top-level key. See [response.md](response.md) for the full mapping.
-
-## Google (74 engines)
+## Google (69 engines)
 
 | Engine | Description | Key Parameters |
 |--------|-------------|----------------|
@@ -59,17 +40,20 @@ Each engine returns results under a specific top-level key. See [response.md](re
 | google_jobs_listing | Detailed Google Jobs listing | q, j_id, htidocid |
 | google_scholar | Google Scholar results | q, as_ylo, as_yhi |
 | google_scholar_author | Google Scholar author profile | author_id, hl |
+| google_scholar_case_law | Google Scholar case law details | case_id |
 | google_scholar_cite | Google Scholar citation details | q, hl |
 | google_scholar_profiles | Google Scholar user profiles | mapex, hl |
 | google_patents | Google Patents results | q, patent_number, country |
 | google_patents_details | Individual patent details | patent_id, hl |
-| google_finance | Google Finance stock/market data | q |
+| google_finance | Google Finance stock/market data | q, window |
 | google_finance_markets | Google Finance market overview | market |
-| google_flights | Google Flights search | departure_id, arrival_id, outbound_date |
+| google_flights | Google Flights search | departure_id, arrival_id, outbound_date, type |
 | google_flights_airports | Google Flights airport information | q, hl |
 | google_flights_autocomplete | Google Flights autocomplete | q, hl |
+| google_flights_deals | Google Flights deal discovery (no fixed route) | departure_id, outbound_date, gl, hl |
 | google_hotels | Google Hotels search | q, check_in_date, check_out_date |
 | google_hotels_ads | Google Hotels advertisements | q, hl |
+| google_hotels_autocomplete | Google Hotels autocomplete suggestions | q, gl, hl |
 | google_hotels_photos | Google Hotels photos | q, hl |
 | google_hotels_reviews | Google Hotels reviews | q, hl |
 | google_hotels_properties | Google Hotels property results | q, hl |
@@ -84,8 +68,9 @@ Each engine returns results under a specific top-level key. See [response.md](re
 | google_play_books | Google Play Books search | q, gl, hl |
 | google_play_games | Google Play Games search | q, gl, hl |
 | google_play_movies | Google Play Movies search | q, gl, hl |
-| google_ads_transparency_center | Google Ads Transparency Center results | q, customer_id |
-| google_ads_transparency_center_ad_details | Individual ad details | advertiser_id, creative_id |
+| google_ads | Google Ads — keyword-level sponsored results (higher rate than google) 🔒 | q, location |
+| google_ads_transparency_center | Google Ads Transparency Center — lookup by advertiser | q, customer_id |
+| google_ads_transparency_center_ad_details | Individual ad creative details | advertiser_id, creative_id |
 | google_immersive_product | Google Immersive Product results | q, product_id |
 | google_forums | Google Forums results | q, gl, hl |
 | google_travel | Google Travel results | q, gl, hl |
@@ -105,7 +90,7 @@ Each engine returns results under a specific top-level key. See [response.md](re
 | bing_product | Bing Product results | product_id, mkt |
 | bing_reverse_image | Bing reverse image search | image_url, cc, mkt |
 
-## DuckDuckGo (4 engines)
+## DuckDuckGo + AI Web (5 engines)
 
 | Engine | Description | Key Parameters |
 |--------|-------------|----------------|
@@ -113,6 +98,7 @@ Each engine returns results under a specific top-level key. See [response.md](re
 | duckduckgo_light | Fast DuckDuckGo Search results | q, kl, l |
 | duckduckgo_maps | DuckDuckGo Maps results | q, kl, l, lat, lon |
 | duckduckgo_news | DuckDuckGo News results | q, kl, l, df |
+| brave_ai_mode | Brave AI Mode search | q, gl, hl |
 
 ## Yahoo, Yandex, Baidu, Naver (15 engines)
 
@@ -138,7 +124,7 @@ Each engine returns results under a specific top-level key. See [response.md](re
 
 | Engine | Description | Key Parameters |
 |--------|-------------|----------------|
-| amazon | Amazon product search | field-keywords, page, sort |
+| amazon | Amazon product search | k, page, sort |
 | amazon_product | Amazon product details | asin |
 | amazon_reviews | Amazon product reviews | asin |
 | ebay | eBay product search | _nkw, _pgn, _sop |
@@ -152,17 +138,20 @@ Each engine returns results under a specific top-level key. See [response.md](re
 | home_depot_product | Home Depot product details | product_id |
 | home_depot_product_reviews | Home Depot product reviews | product_id, page |
 
-## Travel & Local (7 engines)
+## Travel & Local (10 engines)
 
 | Engine | Description | Key Parameters |
 |--------|-------------|----------------|
 | tripadvisor | Tripadvisor results | q, location_id |
 | tripadvisor_place | Tripadvisor place details | data_id |
+| tripadvisor_reviews | Tripadvisor place reviews | location_id |
 | yelp | Yelp business search | find_desc, find_loc |
 | yelp_place | Yelp business details | place_id |
 | yelp_reviews | Yelp reviews | place_id, start |
 | opentable | OpenTable results | q, metroId |
 | open_table_reviews | OpenTable reviews | restaurant_id |
+| apple_maps | Apple Maps local search | query, location |
+| apple_maps_places | Apple Maps Places details | q, gl, hl |
 
 ## Media (9 engines)
 
@@ -178,15 +167,12 @@ Each engine returns results under a specific top-level key. See [response.md](re
 | apple_product | Apple App Store product details | id, country |
 | apple_reviews | Apple App Store reviews | id, country |
 
-## Academic (5 engines)
+## Social (2 engines)
 
 | Engine | Description | Key Parameters |
 |--------|-------------|----------------|
-| google_scholar | Google Scholar results | q, as_ylo, as_yhi |
-| google_scholar_author | Google Scholar author profile | author_id |
-| google_scholar_cite | Google Scholar citation export | q |
-| google_patents | Google Patents results | q, patent_number |
-| google_patents_details | Patent details | patent_id |
+| instagram_profile | Instagram public profile data | profile_id |
+| facebook_profile | Facebook public profile data | profile_id |
 
 ## SerpApi Search Index (Alpha)
 
@@ -196,17 +182,11 @@ SerpApi's own first-party search index — no Google/Bing scraping. Results come
 |--------|-------------|----------------|
 | `search_index` | SerpApi's own crawled web index — fastest, private, no scraping (actively improving; alpha) | `q` |
 
-CLI: `serpapi search engine=search_index q="your query"`  
-HTTP: `GET https://serpapi.com/search.json?engine=search_index&q=...&api_key=...`  
+CLI: `serpapi search engine=search_index q="your query"`
+HTTP: `GET https://serpapi.com/search.json?engine=search_index&q=...&api_key=...`
 Docs: [serpapi.com/search-index-api](https://serpapi.com/search-index-api)
 
 > **Note:** Alpha — ranking and coverage are actively improving. Will be the best LLM-native search option as it matures.
-
-## Other
-
-| Engine | Description | Key Parameters |
-|--------|-------------|----------------|
-| facebook_profile | Facebook public profile data | profile_id |
 
 ---
 Full online engine catalog: [serpapi.com/search-engine-apis](https://serpapi.com/search-engine-apis) · Pricing: [serpapi.com/pricing](https://serpapi.com/pricing) · Usage covered in [SKILL.md](../SKILL.md).
