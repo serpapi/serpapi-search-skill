@@ -6,6 +6,7 @@
 - If already on `_light`: reduce `num` to 3, cache aggressively with `serpapi archive <id>`.
 - Cross-engine fallback order: `google_light` → `bing` → `duckduckgo` (different quota pools? No — all count against same key).
 - `no_cache=true` burns an extra credit; never use it unless freshness is critical.
+- Check `total_searches_left` (not `plan_searches_left`) — it includes extra_credits.
 
 ## [tags: token, context, fields, jq, compact] Minimizing token usage in agent context
 - `--fields "organic_results[0:5]"` is server-side — API returns only those fields, saving bandwidth.
