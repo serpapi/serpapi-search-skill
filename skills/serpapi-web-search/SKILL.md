@@ -20,20 +20,20 @@ Use the first available method:
 
 **1. MCP tool** — use `serpapi_search` if available ([source](https://github.com/serpapi/serpapi-mcp)):
 ```
-serpapi_search(params={"engine": "google_light", "q": "query", "num": 10}, mode="compact")
+serpapi_search(params={"engine": "google_light", "q": "query", "num": 20}, mode="compact")
 ```
 `mode="compact"` strips `search_metadata` and `search_parameters` — smaller context, same results.
 
 **2. serpapi-cli** — preferred shell fallback; optimized for AI agents ([source](https://github.com/serpapi/serpapi-cli)):
 ```bash
-serpapi search engine=google_light q="your query" num=10
+serpapi search engine=google_light q="your query" num=20
 ```
 Install: `brew install serpapi/tap/serpapi-cli`
 Auth: `SERPAPI_KEY` env var, `--api-key` flag, or `serpapi login`.
 Exit codes: `0` success · `1` API error · `2` usage error. Errors are JSON on stderr.
 For `--fields` / `--jq` filtering: see [rules/examples.md](rules/examples.md).
 
-**Result count:** Default to `num=10`. Use `num=3` only for narrow single-fact lookups.
+**Result count:** Default to `num=20`. More results = better context for the model. Use `num=10` for simple lookups, `num=3` only for single-fact verification.
 
 **Token efficiency** — minimize context window usage:
 ```bash
