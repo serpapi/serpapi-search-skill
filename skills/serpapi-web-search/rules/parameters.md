@@ -54,6 +54,7 @@ serpapi search engine=google_light q="AI announcements" tbs=qdr:w
 |:---|:---|:---|
 | `safe` | string | Safe search: `active` or `off`. |
 | `no_cache` | string | Pass `"true"` to bypass cached results and force a live crawl. |
+| `zero_trace` | string | Enterprise only. Pass `"true"` to enable ZeroTrace mode — search parameters, files, and metadata are not stored on SerpApi servers. |
 
 ---
-Full parameter reference: [serpapi.com/search-api](https://serpapi.com/search-api) · Locations lookup: [serpapi.com/locations-api](https://serpapi.com/locations-api)
+Full parameter reference: [serpapi.com/search-api](https://serpapi.com/search-api) · Locations lookup: [serpapi.com/locations-api](https://serpapi.com/locations-api) · ZeroTrace: [serpapi.com/zero-trace-mode](https://serpapi.com/zero-trace-mode)
