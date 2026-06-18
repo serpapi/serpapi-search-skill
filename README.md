@@ -18,11 +18,13 @@ Search the web, news, images, shopping, videos, maps, flights, hotels, jobs, and
 
 ## What's Included
 
-- [SKILL.md](skills/serpapi-web-search/SKILL.md): Core skill definition (routing document).
-- [rules/ENGINES.md](skills/serpapi-web-search/rules/ENGINES.md): Catalog of 100+ supported search engines.
+- [SKILL.md](skills/serpapi-web-search/SKILL.md): Core skill definition — invocation, engine selection, composition patterns.
+- [LESSONS.md](skills/serpapi-web-search/LESSONS.md): Deep knowledge for JIT injection — quota recovery, geo targeting, pagination, advanced patterns.
+- [rules/ENGINES.md](skills/serpapi-web-search/rules/ENGINES.md): Catalog of 133 supported search engines.
 - [rules/parameters.md](skills/serpapi-web-search/rules/parameters.md): All query parameters with examples.
 - [rules/response.md](skills/serpapi-web-search/rules/response.md): Response format and result key reference.
-- [rules/examples.md](skills/serpapi-web-search/rules/examples.md): curl examples for common search types.
+- [rules/examples.md](skills/serpapi-web-search/rules/examples.md): CLI examples for common search types.
+- [rules/use-cases.md](skills/serpapi-web-search/rules/use-cases.md): Multi-engine patterns, fan-out, usage estimation.
 - [api-key-setup.md](docs/api-key-setup.md): Detailed configuration guide for all agents.
 - [AGENTS.md](AGENTS.md): Discovery file for agent integration.
 - [LICENSE](LICENSE): MIT License terms.

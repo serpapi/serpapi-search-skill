@@ -35,6 +35,16 @@ For `--fields` / `--jq` filtering: see [rules/examples.md](rules/examples.md).
 
 **Result count:** Default to `num=10`. Use `num=3` only for narrow single-fact lookups.
 
+**Token efficiency** — minimize context window usage:
+```bash
+# Only return organic results (drop metadata, ads, related searches)
+serpapi search --fields "organic_results" engine=google_light q="query"
+
+# Extract just title+link+snippet — smallest useful payload
+serpapi search --jq "[.organic_results[]|{title,link,snippet}]" engine=google_light q="query"
+```
+With MCP: use `mode="compact"` to strip metadata automatically.
+
 **3. SDK** — when writing code: see [rules/sdks.md](rules/sdks.md) — Python, JS, Go, Ruby, PHP, Java, .NET.
 
 **4. curl** — universal fallback:
@@ -73,6 +83,32 @@ Pick the engine that matches the user's intent:
 Prefer `_light` variants — they're faster and cheaper. Use the full engine only when you need knowledge graph, local pack, or featured snippets.
 
 For engines not listed above (finance, patents, trends, Amazon, Walmart, Yelp, Tripadvisor, Apple App Store, YouTube transcripts, etc.), read [rules/ENGINES.md](rules/ENGINES.md).
+
+## Composition Patterns
+
+**Research fan-out** — answer complex questions by querying multiple surfaces in parallel:
+```bash
+# "What's the market outlook for AAPL?" → 3 parallel calls
+serpapi search engine=google_finance q="AAPL:NASDAQ" &
+serpapi search engine=google_news_light q="Apple earnings 2026" &
+serpapi search engine=google_light q="AAPL analyst consensus" num=5 &
+wait
+```
+
+**Progressive refinement** — start narrow, widen on empty results:
+1. `google_light q="exact phrase" num=5` — try exact match first
+2. If empty: broaden query terms, drop quotes
+3. If still sparse: add `tbs=qdr:y` (past year) or switch engine (`bing`, `duckduckgo`)
+
+**Verification loop** — cross-reference claims across engines:
+```bash
+# Verify a fact from multiple independent sources
+serpapi search engine=google_light q="claim to verify" num=3
+serpapi search engine=bing q="claim to verify" num=3
+# Compare: if both agree → high confidence; if they diverge → flag uncertainty
+```
+
+For more patterns (brand monitoring, product catalog, local business): [rules/use-cases.md](rules/use-cases.md).
 
 ## Error Reference
 

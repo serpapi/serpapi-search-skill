@@ -21,12 +21,14 @@ Documentation-only skill package for AI coding agents. No executable code — th
 │   └── api-key-setup.md                         # SERPAPI_KEY config per agent + CI/CD
 └── skills/serpapi-web-search/
     ├── SKILL.md                                 # Core skill definition (frontmatter + usage)
+    ├── LESSONS.md                               # Deep knowledge — JIT-injected by extension hooks
     ├── serpapi.yaml                             # Network policy preset
     └── rules/
         ├── ENGINES.md                           # Full catalog of 133 search engines
         ├── examples.md                          # CLI examples for common search types
         ├── parameters.md                        # All query parameters with examples
         ├── response.md                          # Response format and result key reference
+        ├── use-cases.md                         # Multi-engine patterns, fan-out, usage formulas
         └── sdks.md                              # SDK quickstart: Python, JS, Go, Ruby, PHP, Java, .NET
 ```
 
