@@ -54,7 +54,16 @@ serpapi search engine=google_light q="AI announcements" tbs=qdr:w
 |:---|:---|:---|
 | `safe` | string | Safe search: `active` or `off`. |
 | `no_cache` | string | Pass `"true"` to bypass cached results and force a live crawl. |
-| `zero_trace` | string | Enterprise only. Pass `"true"` to enable ZeroTrace mode — search parameters, files, and metadata are not stored on SerpApi servers. |
+| `zero_trace` | string | Enterprise only. Pass `"true"` to enable ZeroTrace (ZDR — Zero Data Retention) — search parameters, files, and metadata are not stored on SerpApi servers. |
+| `device` | string | `desktop` (default), `tablet`, or `mobile`. |
+| `async` | string | Pass `"true"` to submit search and retrieve later via [Searches Archive API](https://serpapi.com/search-archive-api). |
+
+## Caching & Billing
+
+- Only **successful** searches count toward your quota. Cached, errored, and failed searches are free.
+- Cache: same query + same parameters = free cached result for 1 hour.
+- `no_cache=true` forces a live crawl (costs 1 credit).
+- Response size doesn't matter — 100 results or 0 results both count as 1 search.
 
 ---
 Full parameter reference: [serpapi.com/search-api](https://serpapi.com/search-api) · Locations lookup: [serpapi.com/locations-api](https://serpapi.com/locations-api) · ZeroTrace: [serpapi.com/zero-trace-mode](https://serpapi.com/zero-trace-mode)
