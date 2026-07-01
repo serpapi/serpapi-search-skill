@@ -119,6 +119,70 @@ serpapi search engine=google_maps q="Acme Auto Repair Austin TX"
 serpapi search engine=google_maps_reviews data_id="<data_id from step 1>"
 ```
 
+## Agent Loop Integration Patterns
+
+### Context-Aware Search (compaction-safe)
+
+Agent runtimes compact conversation history when context exceeds 50–85%. Search results from early turns vanish. Always extract and summarize immediately:
+
+```python
+# BAD: search now, reference raw results 10 turns later
+results = serpapi.search({"engine": "google_light", "q": "topic", "num": 20})
+# ... many turns later ...
+# "What was result #7?" → gone after compaction
+
+# GOOD: extract facts inline, carry only the summary forward
+results = serpapi.search({"engine": "google_light", "q": "topic", "num": 20})
+findings = [{"title": r["title"], "url": r["link"], "fact": r["snippet"]}
+            for r in results["organic_results"][:5]]
+# findings is small and survives compaction
+```
+
+### Subagent Delegation (Claude Agent SDK / Hermes)
+
+Delegate search-heavy work to a subagent to keep the parent context clean:
+
+```python
+# Claude Agent SDK — subagent with scoped tools
+# Note: verify import path against latest SDK docs before use
+from claude_agent_sdk import query, ClaudeAgentOptions
+
+async for msg in query(
+    prompt="Research the top 5 competitors of Acme Corp. Use serpapi_search.",
+    options=ClaudeAgentOptions(
+        allowed_tools=["serpapi_search", "Read"],
+        max_turns=10,
+        max_budget_usd=0.50,
+        effort="medium",
+    ),
+):
+    pass  # parent receives only the final summary
+```
+
+```bash
+# Hermes — delegate_task keeps search iterations isolated
+# Parent's context grows by ~200 tokens (the summary), not 5000+ (raw results)
+```
+
+### Budget-Gated Fan-Out
+
+Before launching parallel queries, check remaining quota:
+
+```bash
+# Check budget before expensive fan-out
+REMAINING=$(serpapi account | grep -o '"total_searches_left":[0-9]*' | grep -o '[0-9]*')
+if [ "$REMAINING" -lt 20 ]; then
+  # Single focused query
+  serpapi search engine=google_light q="$QUERY" num=5
+else
+  # Full fan-out
+  serpapi search engine=google_light q="$QUERY" num=20 &
+  serpapi search engine=google_news_light q="$QUERY" &
+  serpapi search engine=google_scholar q="$QUERY" &
+  wait
+fi
+```
+
 ---
 
 See [ENGINES.md](ENGINES.md) for the full engine list · [parameters.md](parameters.md) for locale/time filtering · [examples.md](examples.md) for CLI patterns.

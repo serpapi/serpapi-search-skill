@@ -7,14 +7,14 @@ All parameters for `GET https://serpapi.com/search.json`.
 | Parameter | Type | Description |
 |:---|:---|:---|
 | `engine` | string | The search engine to use (e.g., `google_light`). |
-| `q` | string | The search query. Required for most engines. Exceptions: `youtube` uses `search_query`; `amazon` uses `k`; `instagram_profile` uses `profile_id`; `google_maps_reviews` uses `data_id`. |
+| `q` | string | The search query. Required for most engines. Exceptions (not exhaustive): `youtube` uses `search_query`; `amazon` uses `k`; `instagram_profile` uses `profile_id`; `google_maps_reviews` uses `data_id`. Check per-engine docs at [serpapi.com/search-engine-apis](https://serpapi.com/search-engine-apis) for non-standard engines. |
 | `api_key` | string | Your SerpApi API key. |
 
 ## Pagination
 
 | Parameter | Type | Description |
 |:---|:---|:---|
-| `num` | integer | Results per page (max 100, default 10). |
+| `num` | integer | Results per page (max 100, default 10). Agents should explicitly pass `num=20` for richer context — see [SKILL.md](../SKILL.md). |
 | `start` | integer | Result offset. Use `start=10&num=10` for page 2. |
 
 ## Locale Targeting

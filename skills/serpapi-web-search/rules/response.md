@@ -34,7 +34,8 @@ Different engines use different top-level array keys for their results:
 | Shopping (`google_shopping_light`, `google_shopping`) | `shopping_results` |
 | Amazon, Walmart, eBay | `organic_results` |
 | Jobs (`google_jobs`) | `jobs_results` |
-| Maps (`google_maps`) | `local_results` |
+| Maps (`google_maps`) — list | `local_results` |
+| Maps (`google_maps`) — single place | `place_results` (when query resolves to one specific place) |
 | Maps Reviews (`google_maps_reviews`) | `reviews` |
 | Videos (`google_videos_light`) | `video_results` |
 | YouTube (`youtube`) | `video_results` |

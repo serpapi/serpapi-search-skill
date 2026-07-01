@@ -14,6 +14,43 @@ compatibility: >-
 license: MIT
 ---
 
+## Detection & Verification
+
+**Prerequisites:** API key required. Three ways to authenticate (in priority order):
+1. `serpapi login` — stores credentials persistently (recommended, one-time)
+2. `export SERPAPI_KEY=your_key_here` — session-level
+3. `--api-key KEY` flag — per-command
+
+If no key: get one from [serpapi.com/dashboard](https://serpapi.com/dashboard). See [api-key-setup](../../docs/api-key-setup.md) for per-agent setup.
+
+Before invoking, detect which method is available (in priority order):
+
+```bash
+# 1. MCP tool — check if serpapi_search is in your tool list (agent-internal; no shell command needed)
+# 2. CLI — check if serpapi is installed and authenticated:
+which serpapi && serpapi account 2>&1 | head -3
+# Expected: "account_email": "...", "account_status": "Active"
+# 3. SDK — try importing in your target language (e.g., `import serpapi` in Python)
+# 4. curl — always available if network access exists
+```
+
+Verify your setup works:
+```bash
+# CLI:
+serpapi search engine=google_light q="test" num=1 --fields "search_metadata"
+# Expected output includes: "status": "Success"
+
+# curl (if CLI not installed):
+curl -s -G "https://serpapi.com/search.json" \
+  --data-urlencode "engine=google_light" \
+  --data-urlencode "q=test" \
+  --data-urlencode "num=1" \
+  --data-urlencode "api_key=${SERPAPI_KEY}" | head -c 200
+# Expected: {"search_metadata":{"status":"Success",...
+```
+
+If you get `401`: run `serpapi login` to refresh credentials, or verify `SERPAPI_KEY` is set correctly. If you get `command not found`: install with `brew install serpapi/tap/serpapi-cli` or fall back to curl.
+
 ## Invocation
 
 Use the first available method:
@@ -38,12 +75,15 @@ For `--fields` / `--jq` filtering: see [rules/examples.md](rules/examples.md).
 **Token efficiency** — minimize context window usage:
 ```bash
 # Only return organic results (drop metadata, ads, related searches)
+# Response shape: {"organic_results": [...]} — same key, filtered content
 serpapi search --fields "organic_results" engine=google_light q="query"
 
 # Extract just title+link+snippet — smallest useful payload
 serpapi search --jq "[.organic_results[]|{title,link,snippet}]" engine=google_light q="query"
 ```
 With MCP: use `mode="compact"` to strip metadata automatically.
+
+Note: `--fields` returns the same JSON structure (keys preserved, other top-level keys removed). `--jq` transforms the output — the result is whatever the jq expression produces.
 
 **3. SDK** — when writing code: see [rules/sdks.md](rules/sdks.md) — Python, JS, Go, Ruby, PHP, Java, .NET.
 
@@ -65,7 +105,7 @@ Pick the engine that matches the user's intent:
 | Comprehensive (knowledge graph, local pack, featured snippets) | `google` |
 | News | `google_news_light` |
 | Images | `google_images_light` |
-| Shopping / prices | `google_shopping_light` |
+| Shopping / prices (comparison shopping) | `google_shopping_light` |
 | Flights | `google_flights` |
 | Hotels | `google_hotels` |
 | Jobs | `google_jobs` |
@@ -82,6 +122,11 @@ Pick the engine that matches the user's intent:
 
 Prefer `_light` variants — they're faster and cheaper. Use the full engine only when you need knowledge graph, local pack, or featured snippets.
 
+**Engine selection gotchas:**
+- `google_shopping_light` returns third-party reseller prices. For a specific retailer's price, use `google_light` with `site:` operator (e.g., `q="MacBook Air M4 site:apple.com"`).
+- `google_maps` returns `place_results` (single place) or `local_results` (list) — check both keys.
+- `google_finance` returns `summary` (quote data), not `organic_results`.
+
 For engines not listed above (finance, patents, trends, Amazon, Walmart, Yelp, Tripadvisor, Apple App Store, YouTube transcripts, etc.), read [rules/ENGINES.md](rules/ENGINES.md).
 
 ## Composition Patterns
@@ -97,8 +142,10 @@ wait
 
 **Progressive refinement** — start narrow, widen on empty results:
 1. `google_light q="exact phrase" num=5` — try exact match first
-2. If empty: broaden query terms, drop quotes
+2. If `organic_results` is empty or missing: broaden query terms, drop quotes
 3. If still sparse: add `tbs=qdr:y` (past year) or switch engine (`bing`, `duckduckgo`)
+
+Empty results are not errors — the response still returns 200 with an empty or absent `organic_results` array. Widen the query or switch engines.
 
 **Verification loop** — cross-reference claims across engines:
 ```bash

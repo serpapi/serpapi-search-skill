@@ -27,7 +27,7 @@
 - Manual: increment `start` by `num` (e.g., `start=0`, `start=10`, `start=20` for pages 1-3).
 - Some engines (google_maps, youtube) use cursor-based pagination — `next_page_token` instead of offset.
 
-## [tags: search_index, vespa, own-index] SerpApi's search_index engine
+## [tags: search_index, own-index, first-party] SerpApi's search_index engine
 - First-party web index — no Google/Bing dependency, no scraping, no quota-per-result cost model.
 - Best for: queries where you want reproducible, non-personalized results independent of Google's ranking.
 - Limitations (alpha): smaller index than Google, no knowledge graph, no featured snippets.
@@ -44,6 +44,7 @@
 ## [tags: maps, local, reviews, data_id] Local business intelligence
 - Two-step pattern: (1) `google_maps q="business name city"` → get `data_id`, (2) `google_maps_reviews data_id=<id>`.
 - `google_maps` returns lat/lng, rating, reviews count, hours, phone — richer than google_light for local.
+- **Single-place vs list:** named business queries return `place_results`; category queries return `local_results`. Always check both keys.
 - For competitor analysis: search category + location (`q="coffee shop Austin TX"`), then pull reviews for top results.
 - `sort_by=newestFirst` on reviews gives freshest signal; default sort is by relevance/rating.
 
@@ -55,6 +56,22 @@
 
 ## [tags: shopping, price, product, comparison] Product price intelligence
 - `google_shopping_light` returns `price`, `extracted_price` (numeric), `source`, `link`.
+- **Shopping returns third-party reseller prices, not official store prices.** For a specific retailer's price, use `google_light q="product site:retailer.com"` instead.
 - For price tracking: same query + `no_cache=true` at intervals (costs 1 credit per check).
 - Cross-reference: `google_shopping_light` (aggregator) vs `amazon` engine (direct) for price gaps.
 - `google_shopping_filters` returns available facets (brand, price range, condition) — useful for building filter UIs.
+
+## [tags: context, compaction, tokens, budget, agent-loop] Context pressure and compaction resilience
+- All major agent runtimes auto-compact when context exceeds 50–85% of the window.
+- After compaction, search results from earlier turns are summarized or lost. Never rely on raw results persisting across many turns.
+- When context is tight: reduce `num` to 5–10, use `--fields "organic_results"` to drop metadata, use `--jq` to extract only `{title,link,snippet}`.
+- For multi-turn research: extract and summarize key findings immediately after each search call — don't defer to "look at earlier results" later.
+- If the agent supports session/archive: `serpapi archive <search_id>` re-fetches without burning a credit. Store the `search_id` in your working notes.
+- Budget-aware pattern: check `serpapi account` for `total_searches_left` before fan-out queries. If < 20 remaining, switch to single-engine mode with `num=5`.
+
+## [tags: subagent, delegation, isolation, parallel, agent-sdk] Subagent and delegation patterns
+- Subagent runtimes (Claude Agent SDK, Hermes, etc.) start child agents with fresh context (no parent history). Delegate search to a subagent when the parent's context is large — only the final summary returns.
+- Pattern: parent says "research X" → subagent runs 3–5 searches → returns a structured summary → parent continues with minimal context cost.
+- For parallel research: launch multiple subagents (one per topic/claim), each with scoped tool access to `serpapi_search`. Merge results in parent.
+- Don't pass raw search JSON between agents. Extract facts, URLs, and snippets into a concise handoff.
+- Some runtimes serialize tool calls per-session — parallel search only works via separate session lanes or internal concurrency within one tool call. Check your runtime's docs.
