@@ -63,7 +63,7 @@ Hidden (not tracked in git):
 
 ## Conventions
 
-- **Discovery**: MCP tool registration (`serpapi_search`) is the only reliable discovery mechanism. Skill files on disk have 0% autonomous discovery rate (tested N=24, 4 models). Always recommend MCP first.
+- **Discovery**: MCP tool registration (`serpapi_search`) is the only reliable discovery mechanism. Skill files on disk have 0% autonomous discovery rate. Always recommend MCP first.
 - **Default engine**: `google_light` — always recommend Light endpoints first for speed/cost.
 - **API key placeholder**: Use `your_key_here` consistently (never hardcode real keys).
 - **Env var name**: `SERPAPI_KEY` — standardized across all docs and examples.

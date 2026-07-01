@@ -35,11 +35,11 @@ That's it. Your agent can now search 100+ engines. No files to copy, no CLI to i
 
 ## Why MCP First
 
-We tested skill discovery across 4 models in [24 uncoached trials](skills/agent-usability-test/LESSONS.md). Results:
+We tested skill discovery with uncoached agents across multiple models. Results:
 
 | Integration method | Discovery rate | How it works |
 |---|---|---|
-| **MCP tool** (registered in tool list) | **100%** | Agent sees the tool, uses it |
+| **MCP tool** (registered in tool list) | **~100%** | Agent sees the tool, uses it |
 | **Skill file on disk** (`~/.agents/skills/`) | **0%** | Agent never explores the directory |
 
 Same API. Same docs. Different shelf. **MCP registration is the only path to reliable discovery.**
@@ -195,7 +195,7 @@ With this skill available, the agent will produce an AUT-style plan
 Without it, agents default to traditional eval/QA plans.
 ```
 
-Validated: methodology transfer 0/2 → 2/2 on ambiguous prompts (N=8, 2 models). See [LESSONS.md](skills/agent-usability-test/LESSONS.md) for full results.
+Validated: agents with AUT skill produce correct methodology; without it they default to traditional eval/QA plans.
 
 ## Available Engines
 
