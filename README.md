@@ -20,7 +20,7 @@ Add to your MCP config (`.cursor/mcp.json`, `.windsurf/mcp.json`, or Claude Desk
 {
   "mcpServers": {
     "serpapi": {
-      "url": "https://mcp.serpapi.com/YOUR_KEY/mcp"
+      "url": "https://mcp.serpapi.com/your_key_here/mcp"
     }
   }
 }
@@ -40,11 +40,11 @@ We tested skill discovery with uncoached agents across multiple models. Results:
 | Integration method | Discovery rate | How it works |
 |---|---|---|
 | **MCP tool** (registered in tool list) | **~100%** | Agent sees the tool, uses it |
-| **Skill file on disk** (`~/.agents/skills/`) | **0%** | Agent never explores the directory |
+| **Skill file on disk** (no runtime injection) | **0%** | Agent never explores the directory unprompted |
 
 Same API. Same docs. Different shelf. **MCP registration is the only path to reliable discovery.**
 
-Skill files are useful as supplementary documentation (engine selection, parameter reference, composition patterns) once MCP provides the tool — but they are not a discovery mechanism.
+Skill files are useful as supplementary documentation (engine selection, parameter reference, composition patterns) once MCP provides the tool — but they are not a reliable discovery mechanism unless the runtime injects them into the agent's context.
 
 ## Installation
 
@@ -52,7 +52,7 @@ Skill files are useful as supplementary documentation (engine selection, paramet
 
 **Hosted** (zero install, lowest friction):
 ```json
-{ "url": "https://mcp.serpapi.com/YOUR_KEY/mcp" }
+{ "url": "https://mcp.serpapi.com/your_key_here/mcp" }
 ```
 
 **Local** (full control, works offline):

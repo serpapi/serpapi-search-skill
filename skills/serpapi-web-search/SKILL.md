@@ -16,7 +16,7 @@ license: MIT
 
 ## Detection & Verification
 
-**Prerequisites:** API key required. Three ways to authenticate (in priority order):
+**Prerequisites:** API key required. For MCP, the key is embedded in the server URL (`mcp.serpapi.com/your_key_here/mcp`) — no further auth needed. For CLI/SDK, authenticate via (in priority order):
 1. `serpapi login` — stores credentials persistently (recommended, one-time)
 2. `export SERPAPI_KEY=your_key_here` — session-level
 3. `--api-key KEY` flag — per-command

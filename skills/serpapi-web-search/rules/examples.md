@@ -2,7 +2,7 @@
 
 All examples use `serpapi-cli` (preferred). For curl equivalents, swap `serpapi search engine=X q=Y` with `curl -G "https://serpapi.com/search.json" --data-urlencode "q=Y" --data-urlencode "engine=X" --data-urlencode "api_key=${SERPAPI_KEY}"`.
 
-> **Note:** Most examples use `q=` as the query parameter. Some engines use different parameter names — e.g., `search_query` (YouTube), `k` (Amazon), `data_id` (Google Maps Reviews). See [parameters.md](parameters.md) for the full list.
+> **Note:** Most examples use `q=` as the query parameter. Some engines use different parameter names — e.g., `search_query` (YouTube), `k` (Amazon), `data_id` (Google Maps Reviews). See [parameters.md](parameters.md) for common alternatives and links to per-engine docs.
 
 ## Google News
 
