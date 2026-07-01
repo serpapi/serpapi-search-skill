@@ -1,14 +1,19 @@
-# SerpApi Search Skill
+# SerpApi Skills
 
-Universal web search across 100+ search engines and result types.
+Web search and agent-facing usability testing for AI coding agents.
 
 <available-skills>
   <skill name="serpapi-web-search" description="Search the web, news, images, shopping, videos, maps, flights, hotels, jobs, and more using SerpApi's 100+ search engines. Supports Google, Bing, DuckDuckGo, Yahoo, YouTube, Amazon, and dozens more. Use google_light as default for fast results." path="skills/serpapi-web-search/SKILL.md" />
+  <skill name="agent-usability-test" description="Agent-facing usability testing. Tests whether docs, APIs, tools, or skills are discoverable and usable by autonomous agents doing real tasks — not whether agents produce good outputs. The subject under test is the interface. A bad score means fix the docs/tool, not the agent." path="skills/agent-usability-test/SKILL.md" />
 </available-skills>
 
 ## Overview
 
-Documentation-only skill package for AI coding agents. No executable code — the deliverable is Markdown files that agents consume. Powered by [SerpApi](https://serpapi.com) REST API via `serpapi_search` MCP tool, the [serpapi CLI](https://github.com/serpapi/serpapi-cli) (preferred), official SDKs, or `curl`.
+Documentation-only skill package for AI coding agents. No executable code — the deliverable is Markdown files that agents consume.
+
+**Skills included:**
+- **serpapi-web-search** — 100+ search engines via [SerpApi](https://serpapi.com) REST API, `serpapi_search` MCP tool, [serpapi CLI](https://github.com/serpapi/serpapi-cli), official SDKs, or `curl`. Currently [133 engines cataloged](skills/serpapi-web-search/rules/ENGINES.md).
+- **agent-usability-test** — methodology for testing whether agents can discover and use your tools. Tool-agnostic, MIT-licensed.
 
 ## Structure
 
@@ -19,17 +24,22 @@ Documentation-only skill package for AI coding agents. No executable code — th
 ├── LICENSE                                      # MIT
 ├── docs/
 │   └── api-key-setup.md                         # SERPAPI_KEY config per agent + CI/CD
-└── skills/serpapi-web-search/
-    ├── SKILL.md                                 # Core skill definition (frontmatter + usage)
-    ├── LESSONS.md                               # Deep knowledge — JIT-injected by extension hooks
-    ├── serpapi.yaml                             # Network policy preset
-    └── rules/
-        ├── ENGINES.md                           # Full catalog of 133 search engines
-        ├── examples.md                          # CLI examples for common search types
-        ├── parameters.md                        # All query parameters with examples
-        ├── response.md                          # Response format and result key reference
-        ├── use-cases.md                         # Multi-engine patterns, fan-out, usage formulas
-        └── sdks.md                              # SDK quickstart: Python, JS, Go, Ruby, PHP, Java, .NET
+├── skills/serpapi-web-search/
+│   ├── SKILL.md                                 # Core skill definition (frontmatter + usage)
+│   ├── LESSONS.md                               # Deep knowledge — JIT-injected by extension hooks
+│   ├── serpapi.yaml                             # Network policy preset
+│   └── rules/
+│       ├── ENGINES.md                           # Full catalog of 133 search engines
+│       ├── examples.md                          # CLI examples for common search types
+│       ├── parameters.md                        # All query parameters with examples
+│       ├── response.md                          # Response format and result key reference
+│       ├── use-cases.md                         # Multi-engine patterns, fan-out, usage formulas
+│       └── sdks.md                              # SDK quickstart: Python, JS, Go, Ruby, PHP, Java, .NET
+└── skills/agent-usability-test/
+    ├── SKILL.md                                 # AUT methodology (failure modes, protocol, scoring)
+    ├── LESSONS.md                               # Empirical findings from real AUT runs
+    └── recipes/
+        └── serpapi-cli.md                       # Concrete trace-capture recipe for serpapi-cli
 ```
 
 Hidden (not tracked in git):
@@ -47,9 +57,13 @@ Hidden (not tracked in git):
 | Change API key instructions | `docs/api-key-setup.md` | Per-agent setup (Claude Code, Cursor, etc.) |
 | Update install instructions | `README.md` | 7 agent platforms + universal curl |
 | Skill discovery metadata | `AGENTS.md` (this file) | `<available-skills>` XML block |
+| Edit AUT methodology | `skills/agent-usability-test/SKILL.md` | Failure modes, protocol, scoring, fix→retest |
+| Add AUT empirical findings | `skills/agent-usability-test/LESSONS.md` | Tagged lessons from real test runs |
+| Run AUT against serpapi-cli | `skills/agent-usability-test/recipes/serpapi-cli.md` | Trace capture, analysis script, fix→retest loop |
 
 ## Conventions
 
+- **Discovery**: MCP tool registration (`serpapi_search`) is the only reliable discovery mechanism. Skill files on disk have 0% autonomous discovery rate (tested N=24, 4 models). Always recommend MCP first.
 - **Default engine**: `google_light` — always recommend Light endpoints first for speed/cost.
 - **API key placeholder**: Use `your_key_here` consistently (never hardcode real keys).
 - **Env var name**: `SERPAPI_KEY` — standardized across all docs and examples.

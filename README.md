@@ -1,169 +1,223 @@
-# SerpApi Search Skill
+# SerpApi Skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Universal web search skill for AI coding agents with support for 100+ search engines.
-
-Search the web, news, images, shopping, videos, maps, flights, hotels, jobs, and academic databases directly from your AI agent. Powered by [SerpApi](https://serpapi.com).
+AI agent skills: web search across 100+ engines and agent-facing usability testing. Powered by [SerpApi](https://serpapi.com).
 
 ## Quick Start
 
-1.  Get your API key from the [SerpApi Dashboard](https://serpapi.com/dashboard).
-2.  Set the environment variable: `export SERPAPI_KEY=your_key_here`
-3.  Install the skill:
-    ```bash
-    npx skills add serpapi/skills
-    ```
-4.  Start searching! See [SKILL.md](skills/serpapi-web-search/SKILL.md) for usage.
+Get an API key from [serpapi.com/dashboard](https://serpapi.com/dashboard), then connect your agent:
 
-## What's Included
+**Claude Code:**
+```bash
+claude mcp add serpapi -- npx -y @serpapi/serpapi-mcp
+```
 
-- [SKILL.md](skills/serpapi-web-search/SKILL.md): Core skill definition — invocation, engine selection, composition patterns.
-- [LESSONS.md](skills/serpapi-web-search/LESSONS.md): Deep knowledge for JIT injection — quota recovery, geo targeting, pagination, advanced patterns.
-- [rules/ENGINES.md](skills/serpapi-web-search/rules/ENGINES.md): Catalog of 133 supported search engines.
-- [rules/parameters.md](skills/serpapi-web-search/rules/parameters.md): All query parameters with examples.
-- [rules/response.md](skills/serpapi-web-search/rules/response.md): Response format and result key reference.
-- [rules/examples.md](skills/serpapi-web-search/rules/examples.md): CLI examples for common search types.
-- [rules/use-cases.md](skills/serpapi-web-search/rules/use-cases.md): Multi-engine patterns, fan-out, usage estimation.
-- [api-key-setup.md](docs/api-key-setup.md): Detailed configuration guide for all agents.
-- [AGENTS.md](AGENTS.md): Discovery file for agent integration.
-- [LICENSE](LICENSE): MIT License terms.
+**Cursor / Windsurf / Claude Desktop:**
+
+Add to your MCP config (`.cursor/mcp.json`, `.windsurf/mcp.json`, or Claude Desktop settings):
+```json
+{
+  "mcpServers": {
+    "serpapi": {
+      "url": "https://mcp.serpapi.com/YOUR_KEY/mcp"
+    }
+  }
+}
+```
+
+**Verify it works** — ask your agent:
+> "What search tools do you have?"
+>
+> Expected: the agent lists `serpapi_search` among its tools.
+
+That's it. Your agent can now search 100+ engines. No files to copy, no CLI to install.
+
+## Why MCP First
+
+We tested skill discovery across 4 models in [24 uncoached trials](skills/agent-usability-test/LESSONS.md). Results:
+
+| Integration method | Discovery rate | How it works |
+|---|---|---|
+| **MCP tool** (registered in tool list) | **100%** | Agent sees the tool, uses it |
+| **Skill file on disk** (`~/.agents/skills/`) | **0%** | Agent never explores the directory |
+
+Same API. Same docs. Different shelf. **MCP registration is the only path to reliable discovery.**
+
+Skill files are useful as supplementary documentation (engine selection, parameter reference, composition patterns) once MCP provides the tool — but they are not a discovery mechanism.
 
 ## Installation
 
-The easiest way to install across all your agents at once:
+### MCP (recommended — tool appears in agent's tool list)
+
+**Hosted** (zero install, lowest friction):
+```json
+{ "url": "https://mcp.serpapi.com/YOUR_KEY/mcp" }
+```
+
+**Local** (full control, works offline):
+```json
+{
+  "command": "npx",
+  "args": ["-y", "@serpapi/serpapi-mcp"],
+  "env": { "SERPAPI_KEY": "your_key_here" }
+}
+```
+
+| Agent | Config file | Transport |
+|-------|-------------|-----------|
+| Claude Code | `claude mcp add serpapi ...` | stdio (local) or `--transport http` (hosted) |
+| Claude Desktop | Settings → MCP | hosted URL |
+| Cursor | `.cursor/mcp.json` | hosted URL or local |
+| Windsurf | `.windsurf/mcp.json` | hosted URL or local |
+| Codex | `.codex/mcp.json` | hosted URL or local |
+
+See [api-key-setup.md](docs/api-key-setup.md) for full config examples per platform and CI/CD setup.
+
+### Skills CLI (cross-platform file install)
 
 ```bash
 npx skills add serpapi/skills
 ```
 
-This installs via the [skills CLI](https://github.com/vercel-labs/skills) and supports Claude Code, Cursor, Codex, OpenCode, Windsurf, and [40+ more agents](https://github.com/vercel-labs/skills#supported-agents).
+Installs via the [skills CLI](https://github.com/vercel-labs/skills). Supports Claude Code, Cursor, Codex, OpenCode, Windsurf, and [40+ agents](https://github.com/vercel-labs/skills#supported-agents). Note: this copies skill files to disk — [discovery depends on the agent platform](#why-mcp-first).
 
-For agent-specific or manual installation:
+### Manual file install
 
-### Claude Code
+For agents that read skill directories but don't support MCP:
+
 ```bash
+# Clone once:
 git clone https://github.com/serpapi/skills.git
-# Global install (available to all projects):
-cp -r skills/serpapi-web-search ~/.claude/skills/
-# Project-scoped install:
-cp -r skills/serpapi-web-search .claude/skills/
-```
-See [api-key-setup.md](docs/api-key-setup.md#claude-code) for MCP configuration.
 
-### Cursor
+# Then copy to your agent's skill directory:
+cp -r skills/serpapi-web-search ~/.claude/skills/   # Claude Code (global)
+cp -r skills/serpapi-web-search .cursor/skills/      # Cursor (project)
+cp -r skills/serpapi-web-search .agents/skills/       # Codex / Copilot CLI
+cp -r skills/serpapi-web-search .windsurf/skills/     # Windsurf
+cp -r skills/serpapi-web-search .opencode/skills/     # OpenCode
+
+# AUT methodology (no API key needed):
+cp -r skills/agent-usability-test ~/.claude/skills/  # or any agent directory above
+```
+
+### serpapi CLI
+
+Direct shell access without MCP:
+
 ```bash
-cp -r skills/serpapi-web-search .cursor/skills/
-```
-Or use the Remote Rules URL pointing to your repository's `SKILL.md`.
-
-### Codex
-```bash
-cp -r skills/serpapi-web-search .agents/skills/
+brew install serpapi/tap/serpapi-cli
+serpapi login
+serpapi search engine=google_light q="coffee shops in Austin"
 ```
 
-### Windsurf
-```bash
-cp -r skills/serpapi-web-search .windsurf/skills/
-```
+### Sandboxed runtimes (OpenClaw / NemoClaw)
 
-### OpenClaw
-```bash
-cp -r skills/serpapi-web-search ~/.openclaw/skills/
-```
-
-### NemoClaw (inside sandbox)
+<details>
+<summary>Expand for sandboxed agent setup</summary>
 
 ```bash
 # 1. Install serpapi-cli inside the sandbox
 go install github.com/serpapi/serpapi-cli/cmd/serpapi@latest
 export SERPAPI_KEY=your_key_here
 
-# 2. Copy the skill into the workspace
+# 2. Copy the skill and network policy
 cp -r skills/serpapi-web-search skills/serpapi-web-search
-
-# 3. Apply the network policy
 openshell policy set skills/serpapi-web-search/serpapi.yaml
 
-# 4. Add to ~/.openclaw/openclaw.json
+# 3. Register in ~/.openclaw/openclaw.json
 # { "skills": { "entries": { "serpapi-web-search": { "enabled": true,
 #   "apiKey": { "source": "env", "provider": "default", "id": "SERPAPI_KEY" } } } } }
 
-# 5. Make permanent
+# 4. Make permanent
 nemoclaw onboard
 ```
 
-Or paste this into any AI assistant with access to your NemoClaw workspace:
+</details>
 
-```
-Fetch https://raw.githubusercontent.com/serpapi/skills/main/skills/serpapi-web-search/SKILL.md
-and save it to skills/serpapi-web-search/SKILL.md.
+### Claude Agent SDK (programmatic)
 
-Fetch https://raw.githubusercontent.com/serpapi/skills/main/skills/serpapi-web-search/serpapi.yaml
-and save it to nemoclaw-blueprint/policies/presets/serpapi.yaml.
+<details>
+<summary>Expand for SDK integration</summary>
 
-Add this to ~/.openclaw/openclaw.json (home directory, not workspace):
-{
-  "skills": {
-    "entries": {
-      "serpapi-web-search": {
-        "enabled": true,
-        "apiKey": { "source": "env", "provider": "default", "id": "SERPAPI_KEY" }
-      }
-    }
-  }
-}
+```python
+from claude_agent_sdk import query, ClaudeAgentOptions
 
-Then run: nemoclaw onboard
+async for msg in query(
+    prompt="Search for the latest AI news",
+    options=ClaudeAgentOptions(
+        allowed_tools=["serpapi_search"],
+        setting_sources=["project"],
+    ),
+):
+    handle(msg)
 ```
 
-### OpenCode
-```bash
-cp -r skills/serpapi-web-search .opencode/skills/
-```
-OpenCode also automatically reads skills from `.claude/skills/` and `.agents/skills/`.
+Clone this repo into your project's `skills/` directory. The SDK discovers `SKILL.md` files automatically via `settingSources`.
 
-### Universal (curl)
-Download the skill definition directly to any directory:
-```bash
-curl -O https://raw.githubusercontent.com/serpapi/skills/main/skills/serpapi-web-search/SKILL.md
+> **Note:** The Agent SDK is evolving — verify the API surface against the [latest docs](https://code.claude.com/docs/en/agent-sdk).
+
+</details>
+
+## What's Included
+
+### serpapi-web-search
+
+| File | Purpose |
+|------|---------|
+| [SKILL.md](skills/serpapi-web-search/SKILL.md) | Core skill — invocation, engine selection, composition patterns |
+| [LESSONS.md](skills/serpapi-web-search/LESSONS.md) | Deep knowledge — quota recovery, geo targeting, pagination |
+| [rules/ENGINES.md](skills/serpapi-web-search/rules/ENGINES.md) | All 133 search engines |
+| [rules/parameters.md](skills/serpapi-web-search/rules/parameters.md) | Query parameters with examples |
+| [rules/response.md](skills/serpapi-web-search/rules/response.md) | Response format and result keys |
+| [rules/examples.md](skills/serpapi-web-search/rules/examples.md) | CLI examples for common searches |
+| [rules/use-cases.md](skills/serpapi-web-search/rules/use-cases.md) | Multi-engine patterns and fan-out |
+| [rules/sdks.md](skills/serpapi-web-search/rules/sdks.md) | SDK quickstart: Python, JS, Go, Ruby, PHP, Java, .NET |
+| [api-key-setup.md](docs/api-key-setup.md) | Per-agent and CI/CD key configuration |
+
+### agent-usability-test
+
+Tests whether docs, APIs, tools, or skills are discoverable and usable by autonomous agents. The subject under test is the interface — a bad score means fix the docs/tool, not the agent.
+
+| File | Purpose |
+|------|---------|
+| [SKILL.md](skills/agent-usability-test/SKILL.md) | AUT methodology — failure modes, protocol, scoring, fix→retest |
+| [LESSONS.md](skills/agent-usability-test/LESSONS.md) | Empirical findings from real test runs |
+| [recipes/serpapi-cli.md](skills/agent-usability-test/recipes/serpapi-cli.md) | Concrete trace-capture recipe for testing serpapi-cli |
+
+**No API key or MCP server needed.** AUT is a methodology skill — it guides agents through designing and running usability tests. Works with any tool or API as the test subject.
+
+Quick start:
+```
+Ask your agent: "Can AI agents use [your tool]? Design a testing plan."
+With this skill available, the agent will produce an AUT-style plan
+(uncoached tasks, WITH/WITHOUT baseline, binary scoring).
+Without it, agents default to traditional eval/QA plans.
 ```
 
-### serpapi CLI
-If you prefer a CLI over raw curl, install the [serpapi CLI](https://github.com/serpapi/serpapi-cli):
-```bash
-brew install serpapi/tap/serpapi-cli
-```
-Then search directly from your shell:
-```bash
-export SERPAPI_KEY=your_key_here
-serpapi search engine=google_light q="coffee shops in Austin"
-```
-
-## API Key Setup
-
-Configure your `SERPAPI_KEY` for secure access. Detailed instructions for environment variables, MCP settings, and CI/CD are available in [api-key-setup.md](docs/api-key-setup.md).
+Validated: methodology transfer 0/2 → 2/2 on ambiguous prompts (N=8, 2 models). See [LESSONS.md](skills/agent-usability-test/LESSONS.md) for full results.
 
 ## Available Engines
 
-Search across 100+ platforms including Google, Bing, DuckDuckGo, YouTube, and Amazon. Use **Light** endpoints for faster responses and lower cost:
+`google_light` is the default — fastest and cheapest. Use the full engine only when you need knowledge graph, local pack, or featured snippets.
 
-- `google_light`: Fastest general web search (default).
-- `google_images_light`: Optimized image search.
-- `google_news_light`: Latest news results.
-- `google_shopping_light`: Product pricing and availability.
-- `google_videos_light`: Video search.
-- `duckduckgo_light`: Privacy-focused web results.
+| Engine | Use case |
+|--------|----------|
+| `google_light` | General web search (default) |
+| `google_news_light` | Latest news |
+| `google_images_light` | Image search |
+| `google_shopping_light` | Product pricing |
+| `google_scholar` | Academic papers |
+| `google_maps` | Local businesses |
+| `youtube` | Video search |
+| `bing` / `duckduckgo` | Alternative web search |
 
-See [rules/ENGINES.md](skills/serpapi-web-search/rules/ENGINES.md) for the full list of 107 engines.
+See [rules/ENGINES.md](skills/serpapi-web-search/rules/ENGINES.md) for all 133 engines.
 
 ## Links
 
-- [SerpApi Website](https://serpapi.com)
-- [API Dashboard](https://serpapi.com/dashboard)
-- [Search Playground](https://serpapi.com/playground)
-- [Documentation](https://serpapi.com/search-api)
+- [SerpApi](https://serpapi.com) · [Dashboard](https://serpapi.com/dashboard) · [Playground](https://serpapi.com/playground) · [Docs](https://serpapi.com/search-api) · [MCP Server](https://github.com/serpapi/serpapi-mcp) · [CLI](https://github.com/serpapi/serpapi-cli)
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+MIT. See [LICENSE](LICENSE).

@@ -1,1 +1,3 @@
 .sisyphus/
+*.py
+__pycache__/
