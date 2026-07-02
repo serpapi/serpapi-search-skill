@@ -61,7 +61,7 @@ All 130+ engines: [rules/ENGINES.md](rules/ENGINES.md) · Online: [serpapi.com/s
 
 ## Gotchas
 
-- **Shopping = third-party reseller prices.** For a specific retailer's price, use `google_light` with `site:` (e.g., `q="MacBook Air M4 site:apple.com"`).
+- **Shopping = third-party reseller prices.** For a specific retailer's price, use `google_light` with `site:` (e.g., `q="MacBook Air M4 site:apple.com"`). Google Shopping aggregates from feeds — prices may not match the retailer's own site (e.g., Target sale prices may lag).
 - **Maps returns `place_results` OR `local_results`** — named business → `place_results`; category search → `local_results`. Always check both keys.
 - **Finance returns `summary`, not `organic_results`.** Same for Flights (`best_flights`), Hotels (`properties`).
 - **Scholar citation count** is at `.organic_results[0].inline_links.cited_by.total` — not a top-level field. Use `--jq '.organic_results[0].inline_links.cited_by.total'` to extract.
@@ -133,9 +133,10 @@ More patterns: [rules/use-cases.md](rules/use-cases.md)
 | Code | Meaning | Fix |
 |---|---|---|
 | 400 | Missing `q` or `engine` | Add the required param. |
-| 401 | Invalid API key | Check `SERPAPI_KEY` or MCP URL contains key. |
+| 401 | Invalid API key | Run `serpapi login` or set `SERPAPI_KEY=<key from serpapi.com/dashboard>`. Do NOT retry with the same key. |
 | 429 | Quota exhausted | Switch to `_light`, reduce `num`, check [dashboard](https://serpapi.com/dashboard). |
 
+If you get 401: the key is wrong or missing. Do not loop — fix the env var first.
 Billing: only successful searches count. Same query + params = free cached result for 1 hour.
 
 ## Reference links
