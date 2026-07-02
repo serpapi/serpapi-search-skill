@@ -16,6 +16,17 @@ license: MIT
 You have `serpapi_search`. This file helps you pick the right engine,
 extract the right response key, and avoid common mistakes.
 
+**Auth check — do this first if you get 401 or haven't used serpapi before:**
+```bash
+# Check if already authenticated:
+serpapi account 2>&1 | head -1
+# If "Active" → you're good. If not:
+serpapi login            # interactive — stores key persistently
+# Or set env: export SERPAPI_KEY=<key from serpapi.com/dashboard>
+```
+If `serpapi` is not on PATH: install with `brew install serpapi/tap/serpapi-cli`.
+If no MCP tool and no CLI: use curl with `api_key=${SERPAPI_KEY}` param (see below).
+
 ## Invocation
 
 ```
