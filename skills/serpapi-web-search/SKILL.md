@@ -38,24 +38,24 @@ For curl: `curl -G "https://serpapi.com/search.json" --data-urlencode "q=..." --
 
 Pick by intent. Prefer `_light` variants (faster, cheaper, cleaner JSON).
 
-| Intent | Engine | Result key |
-|---|---|---|
-| General web (default) | `google_light` | `organic_results` |
-| Knowledge graph / featured snippets / local pack | `google` | `organic_results` + many |
-| News | `google_news_light` | `news_results` |
-| Images | `google_images_light` | `images_results` |
-| Shopping / prices (comparison) | `google_shopping_light` | `shopping_results` |
-| Academic papers | `google_scholar` | `organic_results` |
-| Local businesses (list) | `google_maps` | `local_results` |
-| Local business (single named place) | `google_maps` | `place_results` |
-| Place reviews | `google_maps_reviews` | `reviews` |
-| Video | `youtube` | `video_results` |
-| Stock / ticker | `google_finance` | `summary`, `graph` |
-| Flights | `google_flights` | `best_flights`, `other_flights` |
-| Hotels | `google_hotels` | `properties` |
-| Jobs | `google_jobs` | `jobs_results` |
-| Alternative web / cross-check | `bing`, `duckduckgo` | `organic_results` |
-| SerpApi's own index (alpha) | `search_index` | `organic_results` |
+| Intent | Engine | Result key | Key fields |
+|---|---|---|---|
+| General web (default) | `google_light` | `organic_results` | `.title`, `.link`, `.snippet` |
+| Knowledge graph / featured snippets | `google` | `organic_results` + many | `.knowledge_graph`, `.answer_box` |
+| News | `google_news_light` | `news_results` | `.title`, `.link`, `.date` |
+| Images | `google_images_light` | `images_results` | `.original`, `.thumbnail` |
+| Shopping / prices | `google_shopping_light` | `shopping_results` | `.title`, `.price`, `.source` |
+| Academic papers | `google_scholar` | `organic_results` | `.title`, `.inline_links.cited_by.total` |
+| Local businesses (list) | `google_maps` | `local_results` | `.title`, `.phone`, `.address`, `.rating`, `.reviews` |
+| Local business (single) | `google_maps` | `place_results` | `.title`, `.phone`, `.address`, `.rating`, `.reviews` |
+| Place reviews | `google_maps_reviews` | `reviews` | `.rating`, `.snippet`, `.date` |
+| Video | `youtube` | `video_results` | `.title`, `.link`, `.views`, `.length` |
+| Stock / ticker | `google_finance` | `summary` | `.price`, `.exchange`, `.currency` |
+| Flights | `google_flights` | `best_flights` | `.flights[].airline`, `.price`, `.total_duration` |
+| Hotels | `google_hotels` | `properties` | `.name`, `.total_rate.lowest`, `.overall_rating` |
+| Jobs | `google_jobs` | `jobs_results` | `.title`, `.company_name`, `.location` |
+| Alternative web | `bing`, `duckduckgo` | `organic_results` | `.title`, `.link`, `.snippet` |
+| SerpApi's own index (alpha) | `search_index` | `organic_results` | `.title`, `.link`, `.snippet` |
 
 All 130+ engines: [rules/ENGINES.md](rules/ENGINES.md) · Online: [serpapi.com/search-engine-apis](https://serpapi.com/search-engine-apis)
 
@@ -64,6 +64,9 @@ All 130+ engines: [rules/ENGINES.md](rules/ENGINES.md) · Online: [serpapi.com/s
 - **Shopping = third-party reseller prices.** For a specific retailer's price, use `google_light` with `site:` (e.g., `q="MacBook Air M4 site:apple.com"`).
 - **Maps returns `place_results` OR `local_results`** — named business → `place_results`; category search → `local_results`. Always check both keys.
 - **Finance returns `summary`, not `organic_results`.** Same for Flights (`best_flights`), Hotels (`properties`).
+- **Scholar citation count** is at `.organic_results[0].inline_links.cited_by.total` — not a top-level field. Use `--jq '.organic_results[0].inline_links.cited_by.total'` to extract.
+- **Maps review count** is at `.place_results.reviews` (integer) or `.local_results[].reviews`. Rating at `.rating`.
+- **Flights require specific params** — not `q`. Use `departure_id=JFK arrival_id=LAX outbound_date=2026-07-10 type=2` (type 2 = one-way).
 - **Non-standard query params:**
 
   | Engine | Param (not `q`) |
@@ -98,6 +101,21 @@ serpapi search engine=google_finance q="AAPL:NASDAQ" &
 serpapi search engine=google_news_light q="Apple earnings" &
 serpapi search engine=google_light q="AAPL analyst consensus" num=5 &
 wait
+```
+
+**Common exact-data extractions** (copy-paste patterns):
+```bash
+# Exact citation count
+serpapi search engine=google_scholar q="paper title" --jq '.organic_results[0].inline_links.cited_by.total'
+
+# Business phone + rating + reviews
+serpapi search engine=google_maps q="Business Name City" --jq '.place_results | {phone, rating, reviews}'
+
+# Live flight price
+serpapi search engine=google_flights departure_id=JFK arrival_id=LAX outbound_date=2026-07-10 type=2 --jq '.best_flights[0] | {price, airline: .flights[0].airline}'
+
+# Shopping prices by retailer
+serpapi search engine=google_shopping_light q="Product Name" --jq '[.shopping_results[:5] | .[] | {title, price, source}]'
 ```
 
 **Progressive refinement:** exact phrase → drop quotes → add `tbs=qdr:y` → switch engine.
