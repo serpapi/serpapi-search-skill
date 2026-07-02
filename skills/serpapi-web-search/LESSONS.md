@@ -1,77 +1,66 @@
 # Lessons — serpapi-web-search
 
 ## [tags: quota, 429, rate-limit, fallback] Quota exhaustion recovery
-- 429 means monthly limit reached. Check: `serpapi account` or dashboard.
-- Immediate fallback: switch to `_light` variants (cheaper, same results for most queries).
-- If already on `_light`: reduce `num` to 3, cache aggressively with `serpapi archive <id>`.
-- Cross-engine fallback order: `google_light` → `bing` → `duckduckgo` (different quota pools? No — all count against same key).
-- `no_cache=true` burns an extra credit; never use it unless freshness is critical.
-- Check `total_searches_left` (not `plan_searches_left`) — it includes extra_credits.
+- 429 = monthly limit. Check: `serpapi account` → `total_searches_left` (includes extra_credits).
+- Fallback order: switch to `_light` → reduce `num` to 3 → use `serpapi archive <id>` for re-reads.
+- `no_cache=true` burns a credit; skip unless freshness critical.
+- All engines share one quota pool (no per-engine pools).
 
-## [tags: token, context, fields, jq, compact] Minimizing token usage in agent context
-- `--fields "organic_results[0:5]"` is server-side — API returns only those fields, saving bandwidth.
-- `--jq ".organic_results|[.[]|{title,link,snippet}]"` is client-side — filters after receiving full response.
-- Combine both for minimum tokens: `--fields "organic_results[0:5]" --jq "[.[]|{title,link,snippet}]"`.
-- MCP `mode="compact"` strips `search_metadata` + `search_parameters` (~200 tokens saved per call).
-- For multi-page research, use `serpapi archive <id>` to retrieve previous results without re-querying.
+## [tags: token, context, fields, jq, compact] Minimizing token usage
+- `--fields "organic_results[0:5]"` = server-side filter (API returns only those fields).
+- `--jq "[.[]|{title,link,snippet}]"` = client-side transform (after full response received).
+- Combine both for minimum tokens. For MCP: `mode="compact"` strips metadata (~200 tokens/call).
+- `serpapi archive <id>` re-fetches without burning a credit.
 
-## [tags: location, geo, gl, hl, locale] Geographic targeting precision
-- `gl=us` sets country but results may still be generic. Add `location=Austin, Texas` for city-level precision.
-- `location` values must match SerpApi's canonical list: `serpapi locations q="Austin"` or [locations API](https://serpapi.com/locations-api).
-- For local business queries, `google_maps` + `ll=@lat,lng,zoom` gives better results than `google_light` + `location`.
-- `hl` affects language of UI chrome AND ranking weight of same-language pages.
+## [tags: location, geo, gl, hl, locale] Geographic targeting
+- `gl=us` = country. Add `location=Austin, Texas` for city-level precision.
+- Location values must match canonical list: `serpapi locations q="Austin"` or [locations API](https://serpapi.com/locations-api).
+- For local queries: `google_maps` + `ll=@lat,lng,zoom` > `google_light` + `location`.
+- `hl` affects both UI language AND ranking weight of same-language pages.
 
-## [tags: pagination, all-pages, serpapi_pagination] Paginating through results
-- `serpapi_pagination.next` in response contains the full URL for the next page — use it directly.
-- CLI: `serpapi search --all-pages --max-pages 3` auto-paginates (concatenates all result arrays).
-- Manual: increment `start` by `num` (e.g., `start=0`, `start=10`, `start=20` for pages 1-3).
-- Some engines (google_maps, youtube) use cursor-based pagination — `next_page_token` instead of offset.
+## [tags: pagination, all-pages, serpapi_pagination] Pagination
+- `serpapi_pagination.next` = full URL for next page — use directly.
+- CLI: `--all-pages --max-pages 3` auto-concatenates result arrays.
+- Manual: increment `start` by `num`. Some engines use `next_page_token` (Maps, YouTube).
 
-## [tags: search_index, own-index, first-party] SerpApi's search_index engine
-- First-party web index — no Google/Bing dependency, no scraping, no quota-per-result cost model.
-- Best for: queries where you want reproducible, non-personalized results independent of Google's ranking.
-- Limitations (alpha): smaller index than Google, no knowledge graph, no featured snippets.
-- Same result structure as google_light: `organic_results` with `title`, `link`, `snippet`, `position`.
+## [tags: search_index, own-index, first-party] SerpApi's search_index
+- First-party web index — no Google/Bing dependency, no scraping.
+- Best for: reproducible, non-personalized results independent of Google ranking.
+- Alpha: smaller index, no knowledge graph, no featured snippets.
+- Same structure as google_light: `organic_results` with `{title, link, snippet, position}`.
 - Supports: `q`, `num`, `start`, `safe`, `hl`, `gl`, `site:` operator.
 
-## [tags: news, freshness, tbs, time-filter] Time-filtered search patterns
-- `tbs=qdr:h` (past hour) — useful for breaking news, but may return few/no results for niche topics.
-- `tbs=qdr:d` (past day) — good default for "latest" requests.
-- `tbs=qdr:w` (past week) — best balance of freshness and coverage.
-- For news specifically, prefer `google_news_light` over `google_light` + `tbs` — news engine has better freshness signals.
-- Google Trends (`google_trends`) complements news by showing search volume spikes — use together for trend analysis.
+## [tags: news, freshness, tbs, time-filter] Time-filtered search
+- `tbs=qdr:h` (hour), `qdr:d` (day), `qdr:w` (week — best freshness/coverage balance).
+- For "latest" requests: prefer `google_news_light` over `google_light` + `tbs` (better freshness signals).
+- `google_trends` complements news with search volume spikes.
 
 ## [tags: maps, local, reviews, data_id] Local business intelligence
-- Two-step pattern: (1) `google_maps q="business name city"` → get `data_id`, (2) `google_maps_reviews data_id=<id>`.
-- `google_maps` returns lat/lng, rating, reviews count, hours, phone — richer than google_light for local.
-- **Single-place vs list:** named business queries return `place_results`; category queries return `local_results`. Always check both keys.
-- For competitor analysis: search category + location (`q="coffee shop Austin TX"`), then pull reviews for top results.
-- `sort_by=newestFirst` on reviews gives freshest signal; default sort is by relevance/rating.
+- Two-step: `google_maps q="business city"` → grab `data_id` → `google_maps_reviews data_id=<id>`.
+- Maps returns lat/lng, rating, reviews count, hours, phone — richer than google_light for local.
+- Competitor analysis: category + location (`q="coffee shop Austin TX"`) → reviews for top results.
+- `sort_by=newestFirst` on reviews for freshest signal.
 
-## [tags: scholar, academic, research, citation] Academic research patterns
+## [tags: scholar, academic, research, citation] Academic research
 - `google_scholar q="topic" as_ylo=2024` — restrict to recent papers.
-- Result includes `cited_by.total` — useful for gauging paper importance.
-- For specific authors: `google_scholar_author author_id=<id>` gives full publication list.
-- Combine with `google_light q="paper title" site:arxiv.org"` to find preprints.
+- `cited_by.total` in results = paper importance signal.
+- `google_scholar_author author_id=<id>` for full publication list.
+- Combine with `google_light q="paper title site:arxiv.org"` for preprints.
 
 ## [tags: shopping, price, product, comparison] Product price intelligence
-- `google_shopping_light` returns `price`, `extracted_price` (numeric), `source`, `link`.
-- **Shopping returns third-party reseller prices, not official store prices.** For a specific retailer's price, use `google_light q="product site:retailer.com"` instead.
-- For price tracking: same query + `no_cache=true` at intervals (costs 1 credit per check).
+- `extracted_price` field = numeric (for comparison). `source` = retailer name.
+- Price tracking: same query + `no_cache=true` at intervals.
 - Cross-reference: `google_shopping_light` (aggregator) vs `amazon` engine (direct) for price gaps.
-- `google_shopping_filters` returns available facets (brand, price range, condition) — useful for building filter UIs.
+- `google_shopping_filters` returns facets (brand, price range, condition).
 
-## [tags: context, compaction, tokens, budget, agent-loop] Context pressure and compaction resilience
-- All major agent runtimes auto-compact when context exceeds 50–85% of the window.
-- After compaction, search results from earlier turns are summarized or lost. Never rely on raw results persisting across many turns.
-- When context is tight: reduce `num` to 5–10, use `--fields "organic_results"` to drop metadata, use `--jq` to extract only `{title,link,snippet}`.
-- For multi-turn research: extract and summarize key findings immediately after each search call — don't defer to "look at earlier results" later.
-- If the agent supports session/archive: `serpapi archive <search_id>` re-fetches without burning a credit. Store the `search_id` in your working notes.
-- Budget-aware pattern: check `serpapi account` for `total_searches_left` before fan-out queries. If < 20 remaining, switch to single-engine mode with `num=5`.
+## [tags: context, compaction, tokens, budget, agent-loop] Context pressure
+- Agent runtimes auto-compact at 50–85% context window. Search results from early turns vanish.
+- Always extract findings immediately after each search — don't defer.
+- Budget-gated: check `total_searches_left` before fan-out. If < 20, single-engine mode + `num=5`.
+- `serpapi archive <search_id>` re-fetches without credit cost — store IDs in working notes.
 
-## [tags: subagent, delegation, isolation, parallel, agent-sdk] Subagent and delegation patterns
-- Subagent runtimes (Claude Agent SDK, Hermes, etc.) start child agents with fresh context (no parent history). Delegate search to a subagent when the parent's context is large — only the final summary returns.
-- Pattern: parent says "research X" → subagent runs 3–5 searches → returns a structured summary → parent continues with minimal context cost.
-- For parallel research: launch multiple subagents (one per topic/claim), each with scoped tool access to `serpapi_search`. Merge results in parent.
-- Don't pass raw search JSON between agents. Extract facts, URLs, and snippets into a concise handoff.
-- Some runtimes serialize tool calls per-session — parallel search only works via separate session lanes or internal concurrency within one tool call. Check your runtime's docs.
+## [tags: subagent, delegation, isolation, parallel, agent-sdk] Subagent delegation
+- Subagent runtimes start with fresh context. Delegate search when parent context is large.
+- Pattern: parent → subagent runs 3–5 searches → returns structured summary → parent continues.
+- For parallel research: multiple subagents (one per topic), each with `serpapi_search` access.
+- Extract facts/URLs into concise handoff, never pass raw JSON between agents.

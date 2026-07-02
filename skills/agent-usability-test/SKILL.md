@@ -5,26 +5,24 @@ description: >-
   capable. The subject under test is the interface. A bad score means fix the
   docs/tool, not the agent.
 license: MIT
-version: "0.9"
+version: "1.0"
 ---
 
-## Core idea
+Give agent a goal. Make tool available. Don't mention the tool. Observe.
+Run WITHOUT baseline. Delta = **lift** — the only metric that matters.
+Lift is inversely proportional to model capability: docs matter most for weak models; strong models self-correct from API responses.
 
-Give agent a goal. Make tool available. Don't mention the tool. Observe what happens.
-
-Run the same task WITHOUT the tool as baseline. The delta is **lift** — the only metric that matters.
-
-## What to test
+## Failure modes
 
 | # | Failure | Signal |
 |---|---------|--------|
 | 1 | Non-discovery | Tool never called despite being available and relevant |
-| 2 | Wrong selection | Agent picks suboptimal tool/endpoint when multiple are available |
-| 3 | Parameter cargo-culting | Agent copies doc examples instead of adapting to task |
+| 2 | Wrong selection | Agent picks suboptimal tool when multiple are available |
+| 3 | Parameter cargo-culting | Agent copies doc examples instead of adapting |
 | 4 | Response-schema blindness | Correct call, wrong field extracted |
-| 5 | Auth/error cliff | Error (401, 429, timeout) → agent gives up instead of recovering |
+| 5 | Auth/error cliff | 401/429/timeout → agent gives up instead of recovering |
 
-## How discovery depends on integration level
+## Discovery by integration level
 
 ```
 MCP tool registered    ~100%    (in agent's tool list)
@@ -33,73 +31,40 @@ CLI on $PATH           ~30-50%  (N=4)
 File on disk           0%       (N=12, 4 models)
 ```
 
-Test at your deployment level. File-on-disk test for an MCP-deployed tool = false negative.
+Test at your deployment level. File-on-disk test for MCP-deployed tool = false negative.
 
 ## Protocol
 
-**1. Hypothesize.** State expected outcome before running. Fisher's exact test for N<20.
+1. **Hypothesize.** State expected outcome before running. Fisher's exact for N<20.
+2. **Design tasks** with verifiable answers (binary: correct/incorrect). Don't encode methodology in the prompt.
+3. **Run matrix.** ≥2 models × 2 conditions (WITH/WITHOUT). Uncoached prompt: *"Answer this: [GOAL]. Cite your source."*
+4. **Competition variant (FM#2):** Give ALL competing tools simultaneously. Score which gets picked, not just whether yours works alone. Three conditions: YOURS-ONLY, ALL-TOOLS, NONE.
+5. **Observe via trace** — not self-report. Metrics: discovery rate, selection rate, efficiency (calls to correct answer), recovery rate, lift.
+6. **Score binary per fact.** No 0-100 rubrics.
+7. **Fix → Retest.** Fix docs, not agent. Run old docs as control in same session.
+8. **For valid WITHOUT baseline:** physically remove the skill/tool — task-tool agents inherit parent context and contaminate the WITHOUT condition.
 
-**2. Design tasks** with verifiable answers — a specific fact the agent either gets right or doesn't.
+## Adversarial conditions (tests your error messages, not agent intelligence)
 
-```yaml
-- goal: "What is the phone number of The French Laundry in Yountville, CA?"
-  ground_truth: "(707) 944-2380"
-  scoring: binary
+- **429 rate limit:** retry with backoff or give up?
+- **Network timeout:** fall back or fail silently?
+- **Malformed response:** handle unexpected JSON shape?
+- **Deprecated endpoint:** find current one from error message?
 
-- goal: "What is the starting price of MacBook Air M4 on apple.com?"
-  ground_truth: "$999"
-  scoring: binary
-```
-
-Don't encode the methodology in the task. "Can agents use this tool?" → good. "Test whether the interface is the problem" → bad (teaches the answer).
-
-**3. Run matrix.** ≥2 models × 2 conditions (WITH tool, WITHOUT tool). Agent prompt:
-```
-You are an AI research assistant. Answer this question:
-"[GOAL]"
-Report your answer and cite your source.
-```
-
-**Competition variant:** When testing tool selection (FM#2), give agents ALL competing tools (e.g., Tavily + Exa + SerpApi) and score which gets picked per task. Three conditions: YOUR-TOOL-ONLY, ALL-TOOLS, NO-TOOLS.
-
-**4. Observe via trace** — not self-report. For CLI tools, tmux side-by-side:
-```
-tmux new-session -s aut-with    # agent WITH tool on $PATH
-tmux split-window -h            # agent WITHOUT tool, same goal
-```
-
-For Copilot CLI: `copilot -p "goal" --output-format json` gives full JSONL trace (tool calls, args, responses). For other runtimes, use whatever trace mechanism exposes tool invocations — tmux `pipe-pane`, `script(1)`, or structured logs. See `recipes/` for concrete capture examples.
-
-**5. Score binary per fact.** Correct/incorrect. No 0-100 rubrics.
-
-**6. Fix → Retest.** Fix the docs, not the agent. Retest with OLD docs as control — "3/3 passed after fix" means nothing without "0/3 passed on old docs" in the same run.
-
-## Adversarial conditions
-
-Beyond happy-path discovery, test resilience:
-- **Rate limit (429):** Does the agent retry with backoff or give up?
-- **Network timeout:** Does the agent fall back to alternative tool or fail silently?
-- **Malformed response:** Does the agent handle unexpected JSON shape?
-- **Deprecated endpoint:** Does the agent find the current one from error message?
-
-Score: binary (recovered/didn't). These test your error messages and docs, not agent intelligence.
+Score: binary (recovered / didn't).
 
 ## Don't
 
-- Coach the agent ("use this tool")
+- Coach the agent ("use this tool") — tests reading, not behavior
 - Ask agents to self-report friction
 - Test one model only
 - Skip the WITHOUT baseline
 - Use 0-100 rubric scores
-- Claim significance at N=3
-- Inject the answer in WITH condition (tests reading, not behavior)
-- Score post-hoc without stating criteria first
+- Claim significance at N<10
 
 ## Sample size
 
-- N=1-3/cell → directional only
-- N=10/cell → Fisher's exact, detects large effects
-- N=12/cell → 80% power for moderate effects
+N=1-3/cell → directional only · N=10/cell → Fisher's exact, large effects · N=12/cell → 80% power, moderate effects
 
 ## Not this
 
@@ -110,5 +75,3 @@ Score: binary (recovered/didn't). These test your error messages and docs, not a
 | UXAgent/UXCascade | Is web UI usable for humans? | Human-facing interface |
 | Search API benchmarks | Which API gives better results? | API output quality |
 | **AUT** | **Can agents discover and use it?** | **Agent-facing interface** |
-
-*Empirical findings in LESSONS.md. Load both files.*
