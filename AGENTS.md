@@ -9,6 +9,7 @@
 - `skills/serpapi-web-search/SKILL.md` — core skill: engines, parameters, examples
 - `skills/serpapi-web-search/rules/` — ENGINES.md (133 engines), examples, parameters, response keys, use-cases, SDKs
 - `skills/agent-usability-test/SKILL.md` — AUT methodology: protocol, scoring, fix→retest loop
+- `skills/agent-usability-test/LESSONS.md` — empirical findings: isolation bugs, sample size, contamination
 - `LICENSE` — MIT
 
 ## Editing rules
