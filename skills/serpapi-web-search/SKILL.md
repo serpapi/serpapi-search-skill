@@ -63,8 +63,9 @@ Pick by intent. Prefer `_light` variants (faster, cheaper, cleaner JSON).
 | Video | `youtube` | `video_results` | `.title`, `.link`, `.views`, `.length` |
 | Stock / ticker | `google_finance` | `summary` | `.price`, `.exchange`, `.currency` |
 | Flights | `google_flights` | `best_flights` | `.flights[].airline`, `.price`, `.total_duration` |
-| Hotels | `google_hotels` | `properties` | `.name`, `.total_rate.lowest`, `.overall_rating` |
+| Hotels | `google_hotels` | `properties` | `.name`, `.rate_per_night.extracted_lowest`, `.total_rate.extracted_lowest`, `.overall_rating` |
 | Jobs | `google_jobs` | `jobs_results` | `.title`, `.company_name`, `.location` |
+| App Store (iOS) | `apple_app_store` | `organic_results` | `.title`, `.rating[0].rating`, `.rating[0].count`, `.developer.name` |
 | Alternative web | `bing`, `duckduckgo` | `organic_results` | `.title`, `.link`, `.snippet` |
 | SerpApi's own index (alpha) | `search_index` | `organic_results` | `.title`, `.link`, `.snippet` |
 
@@ -78,6 +79,8 @@ All 130+ engines: [rules/ENGINES.md](rules/ENGINES.md) · Online: [serpapi.com/s
 - **Scholar citation count** is at `.organic_results[0].inline_links.cited_by.total` — not a top-level field. Use `--jq '.organic_results[0].inline_links.cited_by.total'` to extract.
 - **Maps review count** is at `.place_results.reviews` (integer) or `.local_results[].reviews`. Rating at `.rating`.
 - **Flights require specific params** — not `q`. Use `departure_id=JFK arrival_id=LAX outbound_date=2026-07-10 type=2` (type 2 = one-way).
+- **Hotels require dates** — `q="hotels in Kyoto" check_in_date=2026-07-20 check_out_date=2026-07-22 adults=2`. Price is at `.properties[].rate_per_night.extracted_lowest` (per night) or `.total_rate.extracted_lowest` (total stay). Sort by price: `sort_by=8`.
+- **Apple App Store uses `term`** — not `q`. Rating is nested: `.organic_results[0].rating[0].rating` (float, e.g. 4.78).
 - **Non-standard query params:**
 
   | Engine | Param (not `q`) |
@@ -88,6 +91,8 @@ All 130+ engines: [rules/ENGINES.md](rules/ENGINES.md) · Online: [serpapi.com/s
   | `walmart` | `query` |
   | `google_maps_reviews` | `data_id` |
   | `google_flights` | `departure_id` + `arrival_id` + `outbound_date` |
+  | `google_hotels` | `q` + `check_in_date` + `check_out_date` + `adults` |
+  | `apple_app_store` | `term` (not `q`) |
 
 ## Parameters
 
