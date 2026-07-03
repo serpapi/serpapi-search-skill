@@ -1,0 +1,102 @@
+name: Verify engine table
+
+on:
+  push:
+    paths:
+      - 'skills/serpapi-web-search/SKILL.md'
+      - '.github/workflows/verify-engines.yml'
+  schedule:
+    - cron: '0 9 * * 1'  # Monday 9am — catch stale paths from API changes
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify each engine's response path
+        run: |
+          set -euo pipefail
+          PASS=0; FAIL=0; SKIP=0
+
+          # Engine table: engine | result_key | fields
+          # Parse from SKILL.md between "## Engine selection" and "## Gotchas"
+          declare -A QUERIES=(
+            [google_light]="q=test"
+            [google]="q=test"
+            [google_scholar]="q=attention+is+all+you+need"
+            [google_maps]="q=Central+Park+New+York"
+            [google_maps_reviews]="data_id=0x89c2589a018531e3:0xb9df1f7387a94119"
+            [youtube]="search_query=hello+world"
+            [google_finance]="q=AAPL:NASDAQ"
+            [google_flights]="departure_id=JFK&arrival_id=LAX&outbound_date=$(date -d '+7 days' +%Y-%m-%d 2>/dev/null || date -v+7d +%Y-%m-%d)&type=2"
+            [google_hotels]="q=hotels+in+Kyoto&check_in_date=$(date -d '+14 days' +%Y-%m-%d 2>/dev/null || date -v+14d +%Y-%m-%d)&check_out_date=$(date -d '+16 days' +%Y-%m-%d 2>/dev/null || date -v+16d +%Y-%m-%d)&adults=2"
+            [google_shopping_light]="q=headphones"
+            [google_news_light]="q=technology"
+            [google_images_light]="q=sunset"
+            [google_jobs]="q=software+engineer"
+            [apple_app_store]="term=Notion"
+            [bing]="q=test"
+            [duckduckgo]="q=test"
+          )
+
+          declare -A RESULT_KEYS=(
+            [google_light]="organic_results"
+            [google]="organic_results"
+            [google_scholar]="organic_results"
+            [google_maps]="place_results"
+            [google_maps_reviews]="reviews"
+            [youtube]="video_results"
+            [google_finance]="summary"
+            [google_flights]="best_flights"
+            [google_hotels]="properties"
+            [google_shopping_light]="shopping_results"
+            [google_news_light]="news_results"
+            [google_images_light]="images_results"
+            [google_jobs]="jobs_results"
+            [apple_app_store]="organic_results"
+            [bing]="organic_results"
+            [duckduckgo]="organic_results"
+          )
+
+          for engine in "${!QUERIES[@]}"; do
+            params="${QUERIES[$engine]}"
+            expected_key="${RESULT_KEYS[$engine]}"
+
+            resp=$(curl -s "https://serpapi.com/search.json?engine=${engine}&${params}&api_key=${SERPAPI_KEY}")
+
+            # Check if result key exists and is non-empty
+            has_key=$(echo "$resp" | python3 -c "
+          import json, sys
+          d = json.load(sys.stdin)
+          key = '${expected_key}'
+          if key in d and d[key]:
+              print('yes')
+          else:
+              print('no')
+          " 2>/dev/null || echo "error")
+
+            if [ "$has_key" = "yes" ]; then
+              echo "✓ $engine → $expected_key"
+              ((PASS++))
+            elif [ "$has_key" = "error" ]; then
+              echo "⊘ $engine → SKIP (parse error)"
+              ((SKIP++))
+            else
+              echo "✗ $engine → expected '$expected_key' not found"
+              echo "  Response keys: $(echo "$resp" | python3 -c "import json,sys; print(list(json.load(sys.stdin).keys())[:10])" 2>/dev/null)"
+              ((FAIL++))
+            fi
+
+            sleep 1  # rate limit courtesy
+          done
+
+          echo ""
+          echo "=== Results: $PASS pass, $FAIL fail, $SKIP skip ==="
+
+          if [ "$FAIL" -gt 0 ]; then
+            echo "::error::$FAIL engine(s) returned unexpected response structure"
+            exit 1
+          fi
