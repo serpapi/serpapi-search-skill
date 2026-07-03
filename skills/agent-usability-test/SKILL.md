@@ -77,9 +77,10 @@ N=1-3/cell → directional only (never publish) · N=10/cell → Fisher's exact,
 1. [ ] GTs verified same-day via the tool itself (not from memory/training data)
 2. [ ] Pilot: 1 run WITH — agent discovers and uses the tool? If not, fix infra.
 3. [ ] Pilot: 1 run WITHOUT — agent has zero awareness of tool? If not, fix isolation.
-4. [ ] Scoring function matches GT format (comma-separated numbers, decimal points, currency symbols)
-5. [ ] Error rate <10% in pilot (rate limits, auth failures, timeouts)
-6. [ ] Questions span ≥3 engines/capabilities (not all the same difficulty)
+4. [ ] Information asymmetry check: can web search answer this task? If yes, expect 0pp lift regardless of skill quality. Test with 1 WITHOUT run — if correct, the task is too easy.
+5. [ ] Scoring function matches GT format (comma-separated numbers, decimal points, currency symbols)
+6. [ ] Error rate <10% in pilot (rate limits, auth failures, timeouts)
+7. [ ] Questions span ≥3 engines/capabilities (not all the same difficulty)
 
 ## Not this
 

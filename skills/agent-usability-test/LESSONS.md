@@ -39,3 +39,7 @@ First full run (120 trials, 8 parallel, HOME=/tmp) produced garbage: 81 ERRORs, 
 ## [tags: behavioral-vs-score] "Used the tool" ≠ "correct answer" (2026-07-03)
 
 Haiku retest: used serpapi CLI successfully in 3/3 manual trials (behavioral pass). But got wrong numbers because flight prices changed (score fail). These are independent metrics. Report both: discovery/usage rate (behavioral) AND correctness (score). Don't conflate.
+
+## [tags: task-design, information-asymmetry] 0pp lift means no information asymmetry, not broken docs (2026-07-03)
+
+Hotels and App Store both showed 0pp lift in 240-run retest. Initial diagnosis: documentation bugs (wrong JSON path, missing engine). Fixed both, retested N=12. Agents used the API correctly — still 0pp. Web search answers via Booking.com and AppBrain equally well. The task doesn't need the tool. Lesson: before attributing 0pp to doc quality, run 1 WITHOUT trial. If it passes, the task has no information asymmetry and will never show lift regardless of skill quality. Good AUT tasks: Scholar citations (no aggregator), live flight prices (not cached), Maps exact review counts (not on web).
