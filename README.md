@@ -49,7 +49,7 @@ Set `SERPAPI_KEY` as a repo secret. Never commit keys.
 - [`skills/serpapi-web-search/SKILL.md`](skills/serpapi-web-search/SKILL.md) — engine selection, examples, parameters
 - [`@serpapi/serpapi-mcp`](https://github.com/serpapi/serpapi-mcp) — MCP server source
 - [`serpapi-cli`](https://github.com/serpapi/serpapi-cli) — terminal usage
-- [serpapi.com/docs](https://serpapi.com/docs) — full API reference
+- [serpapi.com/search-api](https://serpapi.com/search-api) — full API reference
 
 ## License
 
