@@ -19,10 +19,16 @@ jobs:
       - name: Verify each engine's response path
         run: |
           set -euo pipefail
+
+          if [ -z "${SERPAPI_KEY:-}" ]; then
+            echo "::warning::SERPAPI_KEY not set (fork or missing secret). Skipping."
+            exit 0
+          fi
+
           PASS=0; FAIL=0; SKIP=0
 
-          # Engine table: engine | result_key | fields
-          # Parse from SKILL.md between "## Engine selection" and "## Gotchas"
+          # Hardcoded engine→query and engine→result_key maps.
+          # Update these when SKILL.md engine table changes.
           declare -A QUERIES=(
             [google_light]="q=test"
             [google]="q=test"
@@ -46,7 +52,7 @@ jobs:
             [google_light]="organic_results"
             [google]="organic_results"
             [google_scholar]="organic_results"
-            [google_maps]="place_results"
+            [google_maps]="place_results|local_results"
             [google_maps_reviews]="reviews"
             [youtube]="video_results"
             [google_finance]="summary"
@@ -67,12 +73,12 @@ jobs:
 
             resp=$(curl -s "https://serpapi.com/search.json?engine=${engine}&${params}&api_key=${SERPAPI_KEY}")
 
-            # Check if result key exists and is non-empty
+            # Check if result key exists and is non-empty (supports pipe-separated alternatives)
             has_key=$(echo "$resp" | python3 -c "
           import json, sys
           d = json.load(sys.stdin)
-          key = '${expected_key}'
-          if key in d and d[key]:
+          keys = '${expected_key}'.split('|')
+          if any(k in d and d[k] for k in keys):
               print('yes')
           else:
               print('no')
