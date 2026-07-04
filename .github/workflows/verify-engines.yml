@@ -80,14 +80,14 @@ jobs:
 
             if [ "$has_key" = "yes" ]; then
               echo "✓ $engine → $expected_key"
-              ((PASS++))
+              PASS=$((PASS + 1))
             elif [ "$has_key" = "error" ]; then
               echo "⊘ $engine → SKIP (parse error)"
-              ((SKIP++))
+              SKIP=$((SKIP + 1))
             else
               echo "✗ $engine → expected '$expected_key' not found"
               echo "  Response keys: $(echo "$resp" | python3 -c "import json,sys; print(list(json.load(sys.stdin).keys())[:10])" 2>/dev/null)"
-              ((FAIL++))
+              FAIL=$((FAIL + 1))
             fi
 
             sleep 1  # rate limit courtesy
