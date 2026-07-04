@@ -1,141 +1,163 @@
 ---
 name: serpapi-web-search
 description: >-
-  Search the web using SerpApi's 100+ search engines. Use this skill whenever
-  the user needs current or web-sourced information: researching a topic,
-  checking recent news, comparing products or prices, finding local businesses,
-  searching images or videos, or looking up academic papers, flights, hotels,
-  or stocks — even if they don't explicitly ask to "search the web." Default
-  to google_light for speed. Supports Google, Bing, DuckDuckGo, YouTube,
-  Amazon, Maps, Scholar, and more.
+  Structured search data via 130+ engines — use INSTEAD OF web_search when you
+  need: exact citations (google_scholar), local business details (google_maps),
+  flight prices (google_flights), hotel rates (google_hotels), shopping prices
+  (google_shopping_light), job listings (google_jobs), or any task where
+  web_search gives approximate/unstructured results. Returns machine-readable
+  JSON. Default engine: google_light.
 compatibility: >-
-  Requires one of: a native serpapi_search tool; or the serpapi CLI (brew install serpapi/tap/serpapi-cli); or an SDK; or outbound network
-  access with curl. All paths require a SERPAPI_KEY.
+  Requires: serpapi_search MCP tool, or serpapi CLI, or SDK, or curl.
+  All paths need SERPAPI_KEY.
 license: MIT
 ---
 
+You have `serpapi_search`. This file helps you pick the right engine,
+extract the right response key, and avoid common mistakes.
+
+**Auth check — do this first if you get 401 or haven't used serpapi before:**
+```bash
+# Check if already authenticated:
+serpapi account 2>&1 | head -1
+# If "Active" → you're good. If not:
+serpapi login            # interactive — stores key persistently
+# Or set env: export SERPAPI_KEY=<key from serpapi.com/dashboard>
+```
+If `serpapi` is not on PATH: install with `brew install serpapi/tap/serpapi-cli`.
+If no MCP tool and no CLI: use curl with `api_key=${SERPAPI_KEY}` param (see below).
+
 ## Invocation
 
-Use the first available method:
-
-**1. MCP tool** — use `serpapi_search` if available ([source](https://github.com/serpapi/serpapi-mcp)):
 ```
-serpapi_search(params={"engine": "google_light", "q": "query", "num": 20}, mode="compact")
+serpapi_search(params={"engine": "google_light", "q": "<query>", "num": 20}, mode="compact")
 ```
-`mode="compact"` strips `search_metadata` and `search_parameters` — smaller context, same results.
 
-**2. serpapi-cli** — preferred shell fallback; optimized for AI agents ([source](https://github.com/serpapi/serpapi-cli)):
+`mode="compact"` strips metadata — same results, ~200 fewer tokens.
+Default `num=20`. Use `num=10` for simple lookups, `num=3` for single-fact verification.
+Empty results ≠ error. `organic_results` may be absent on 200 — widen query or switch engine.
+
+**CLI fallback** ([serpapi-cli](https://github.com/serpapi/serpapi-cli)):
 ```bash
-serpapi search engine=google_light q="your query" num=20
+serpapi search engine=google_light q="query" num=20
 ```
-Install: `brew install serpapi/tap/serpapi-cli`
-Auth: `SERPAPI_KEY` env var, `--api-key` flag, or `serpapi login`.
-Exit codes: `0` success · `1` API error · `2` usage error. Errors are JSON on stderr.
-For `--fields` / `--jq` filtering: see [rules/examples.md](rules/examples.md).
+For `--fields`/`--jq` filtering: [rules/examples.md](rules/examples.md).
+For SDKs (Python/JS/Go/Ruby/PHP/Java/.NET): [rules/sdks.md](rules/sdks.md).
+For curl: `curl -G "https://serpapi.com/search.json" --data-urlencode "q=..." --data-urlencode "engine=google_light" --data-urlencode "api_key=${SERPAPI_KEY}"`
 
-**Result count:** Default to `num=20`. More results = better context for the model. Use `num=10` for simple lookups, `num=3` only for single-fact verification.
+## Engine selection
 
-**Token efficiency** — minimize context window usage:
+Pick by intent. Prefer `_light` variants (faster, cheaper, cleaner JSON).
+
+| Intent | Engine | Result key | Key fields |
+|---|---|---|---|
+| General web (default) | `google_light` | `organic_results` | `.title`, `.link`, `.snippet` |
+| Knowledge graph / featured snippets | `google` | `organic_results` + many | `.knowledge_graph`, `.answer_box` |
+| News | `google_news_light` | `news_results` | `.title`, `.link`, `.date` |
+| Images | `google_images_light` | `images_results` | `.original`, `.thumbnail` |
+| Shopping / prices | `google_shopping_light` | `shopping_results` | `.title`, `.price`, `.source` |
+| Academic papers | `google_scholar` | `organic_results` | `.title`, `.inline_links.cited_by.total` |
+| Local businesses (list) | `google_maps` | `local_results` | `.title`, `.phone`, `.address`, `.rating`, `.reviews` |
+| Local business (single) | `google_maps` | `place_results` | `.title`, `.phone`, `.address`, `.rating`, `.reviews` |
+| Place reviews | `google_maps_reviews` | `reviews` | `.rating`, `.snippet`, `.date` |
+| Video | `youtube` | `video_results` | `.title`, `.link`, `.views`, `.length` |
+| Stock / ticker | `google_finance` | `summary` | `.price`, `.exchange`, `.currency` |
+| Flights | `google_flights` | `best_flights` | `.flights[].airline`, `.price`, `.total_duration` |
+| Hotels | `google_hotels` | `properties` | `.name`, `.rate_per_night.extracted_lowest`, `.total_rate.extracted_lowest`, `.overall_rating` |
+| Jobs | `google_jobs` | `jobs_results` | `.title`, `.company_name`, `.location` |
+| App Store (iOS) | `apple_app_store` | `organic_results` | `.title`, `.rating[0].rating`, `.rating[0].count`, `.developer.name` |
+| Alternative web | `bing`, `duckduckgo` | `organic_results` | `.title`, `.link`, `.snippet` |
+| SerpApi's own index (alpha) | `search_index` | `organic_results` | `.title`, `.link`, `.snippet` |
+
+All 130+ engines: [rules/ENGINES.md](rules/ENGINES.md) · Online: [serpapi.com/search-engine-apis](https://serpapi.com/search-engine-apis)
+
+## Gotchas
+
+- **Shopping = third-party reseller prices.** For a specific retailer's price, use `google_light` with `site:` (e.g., `q="MacBook Air M4 site:apple.com"`). Google Shopping aggregates from feeds — prices may not match the retailer's own site (e.g., Target sale prices may lag).
+- **Maps returns `place_results` OR `local_results`** — named business → `place_results`; category search → `local_results`. Always check both keys.
+- **Finance returns `summary`, not `organic_results`.** Same for Flights (`best_flights`), Hotels (`properties`).
+- **Scholar citation count** is at `.organic_results[0].inline_links.cited_by.total` — not a top-level field. Use `--jq '.organic_results[0].inline_links.cited_by.total'` to extract.
+- **Maps review count** is at `.place_results.reviews` (integer) or `.local_results[].reviews`. Rating at `.rating`.
+- **Flights require specific params** — not `q`. Use `departure_id=JFK arrival_id=LAX outbound_date=2026-07-10 type=2` (type 2 = one-way).
+- **Hotels require dates** — `q="hotels in Kyoto" check_in_date=2026-07-20 check_out_date=2026-07-22 adults=2`. Price is at `.properties[].rate_per_night.extracted_lowest` (per night) or `.total_rate.extracted_lowest` (total stay). Sort by price: `sort_by=8`.
+- **Apple App Store uses `term`** — not `q`. Rating is nested: `.organic_results[0].rating[0].rating` (float, e.g. 4.78).
+- **Non-standard query params:**
+
+  | Engine | Param (not `q`) |
+  |---|---|
+  | `youtube` | `search_query` |
+  | `amazon` | `k` |
+  | `ebay` | `_nkw` |
+  | `walmart` | `query` |
+  | `google_maps_reviews` | `data_id` |
+  | `google_flights` | `departure_id` + `arrival_id` + `outbound_date` |
+  | `google_hotels` | `q` + `check_in_date` + `check_out_date` + `adults` |
+  | `apple_app_store` | `term` (not `q`) |
+
+## Parameters
+
+Most tasks need only `engine`, `q`, `num`. Add when relevant:
+
+| Param | Use |
+|---|---|
+| `gl` | Country code (`us`, `uk`, `de`). Default `us`. |
+| `hl` | Language (`en`, `es`, `fr`). Affects ranking. |
+| `location` | City string (`"Austin, Texas"`). Overrides `gl`. |
+| `tbs` | Time: `qdr:d` (day), `qdr:w` (week), `qdr:m` (month), `qdr:y` (year). |
+| `start` | Pagination offset. Prefer `serpapi_pagination.next` when present. |
+| `no_cache` | `"true"` = live crawl (costs 1 credit). |
+
+Full reference: [rules/parameters.md](rules/parameters.md) · Locations: [serpapi.com/locations-api](https://serpapi.com/locations-api)
+
+## Composition
+
+**Fan out** for research (parallel, not sequential):
 ```bash
-# Only return organic results (drop metadata, ads, related searches)
-serpapi search --fields "organic_results" engine=google_light q="query"
-
-# Extract just title+link+snippet — smallest useful payload
-serpapi search --jq "[.organic_results[]|{title,link,snippet}]" engine=google_light q="query"
-```
-With MCP: use `mode="compact"` to strip metadata automatically.
-
-**3. SDK** — when writing code: see [rules/sdks.md](rules/sdks.md) — Python, JS, Go, Ruby, PHP, Java, .NET.
-
-**4. curl** — universal fallback:
-```bash
-curl -G "https://serpapi.com/search.json" \
-  --data-urlencode "q=your query" \
-  --data-urlencode "engine=google_light" \
-  --data-urlencode "api_key=${SERPAPI_KEY}"
-```
-
-## Engine Selection
-
-Pick the engine that matches the user's intent:
-
-| Use Case | Engine |
-|:---|:---|
-| **General web — default for AI agents** | `google_light` ⚡ |
-| Comprehensive (knowledge graph, local pack, featured snippets) | `google` |
-| News | `google_news_light` |
-| Images | `google_images_light` |
-| Shopping / prices | `google_shopping_light` |
-| Flights | `google_flights` |
-| Hotels | `google_hotels` |
-| Jobs | `google_jobs` |
-| Alternative web | `bing` |
-| Privacy-first | `duckduckgo` |
-| Academic / research | `google_scholar` |
-| Local / maps | `google_maps` |
-| Video | `youtube` |
-| **SerpApi's own crawled index** | `search_index` 🔬 |
-
-**For AI/LLM agents:** `google_light` is the recommended default — it has the lowest latency, smallest response payload, and returns clean organic results without the noise of the full `google` engine. Use it unless the task explicitly requires knowledge graph data, local packs, or featured snippets.
-
-**`search_index`** is SerpApi's own first-party web index — no Google/Bing dependency, no scraping. It is in active development and improving rapidly. Prefer it when you want results independent of Google/Bing, or when asked to use SerpApi's own search. It will be the best LLM-native search option as it matures.
-
-Prefer `_light` variants — they're faster and cheaper. Use the full engine only when you need knowledge graph, local pack, or featured snippets.
-
-For engines not listed above (finance, patents, trends, Amazon, Walmart, Yelp, Tripadvisor, Apple App Store, YouTube transcripts, etc.), read [rules/ENGINES.md](rules/ENGINES.md).
-
-## Composition Patterns
-
-**Research fan-out** — answer complex questions by querying multiple surfaces in parallel:
-```bash
-# "What's the market outlook for AAPL?" → 3 parallel calls
 serpapi search engine=google_finance q="AAPL:NASDAQ" &
-serpapi search engine=google_news_light q="Apple earnings 2026" &
+serpapi search engine=google_news_light q="Apple earnings" &
 serpapi search engine=google_light q="AAPL analyst consensus" num=5 &
 wait
 ```
 
-**Progressive refinement** — start narrow, widen on empty results:
-1. `google_light q="exact phrase" num=5` — try exact match first
-2. If empty: broaden query terms, drop quotes
-3. If still sparse: add `tbs=qdr:y` (past year) or switch engine (`bing`, `duckduckgo`)
-
-**Verification loop** — cross-reference claims across engines:
+**Common exact-data extractions** (copy-paste patterns):
 ```bash
-# Verify a fact from multiple independent sources
-serpapi search engine=google_light q="claim to verify" num=3
-serpapi search engine=bing q="claim to verify" num=3
-# Compare: if both agree → high confidence; if they diverge → flag uncertainty
+# Exact citation count
+serpapi search engine=google_scholar q="paper title" --jq '.organic_results[0].inline_links.cited_by.total'
+
+# Business phone + rating + reviews
+serpapi search engine=google_maps q="Business Name City" --jq '.place_results | {phone, rating, reviews}'
+
+# Live flight price
+serpapi search engine=google_flights departure_id=JFK arrival_id=LAX outbound_date=2026-07-10 type=2 --jq '.best_flights[0] | {price, airline: .flights[0].airline}'
+
+# Shopping prices by retailer
+serpapi search engine=google_shopping_light q="Product Name" --jq '[.shopping_results[:5] | .[] | {title, price, source}]'
 ```
 
-For more patterns (brand monitoring, product catalog, local business): [rules/use-cases.md](rules/use-cases.md).
+**Progressive refinement:** exact phrase → drop quotes → add `tbs=qdr:y` → switch engine.
 
-## Error Reference
+**Two-step reviews:** `google_maps q="business"` → grab `data_id` → `google_maps_reviews data_id=<id>`.
 
-- **401** — Invalid or missing API key.
-- **429** — Monthly quota reached. Check usage: `serpapi account` or [serpapi.com/dashboard](https://serpapi.com/dashboard) · [account API](https://serpapi.com/account-api).
-- **400** — Missing required parameter (`q` or `engine`).
+**Cross-check:** same query on `google_light` + `bing` — both agree → high confidence.
 
-## Docs
+**Extract inline.** After each search, pull `{title, link, snippet}` into working notes. Don't rely on raw results surviving context compaction.
 
-Official reference (link these when agents need deeper detail):
+More patterns: [rules/use-cases.md](rules/use-cases.md)
 
-| Topic | URL |
-|:---|:---|
-| Main API reference | [serpapi.com/search-api](https://serpapi.com/search-api) |
-| All engines (online) | [serpapi.com/search-engine-apis](https://serpapi.com/search-engine-apis) |
-| Locations lookup | [serpapi.com/locations-api](https://serpapi.com/locations-api) |
-| Account & quota API | [serpapi.com/account-api](https://serpapi.com/account-api) |
-| Search Index API (alpha) | [serpapi.com/search-index-api](https://serpapi.com/search-index-api) |
-| Pricing | [serpapi.com/pricing](https://serpapi.com/pricing) |
+## Errors
 
-## Rules
+| Code | Meaning | Fix |
+|---|---|---|
+| 400 | Missing `q` or `engine` | Add the required param. |
+| 401 | Invalid API key | Run `serpapi login` or set `SERPAPI_KEY=<key from serpapi.com/dashboard>`. Do NOT retry with the same key. |
+| 429 | Quota exhausted | Switch to `_light`, reduce `num`, check [dashboard](https://serpapi.com/dashboard). |
 
-Read these files when you need more detail:
+If you get 401: the key is wrong or missing. Do not loop — fix the env var first.
+Billing: only successful searches count. Same query + params = free cached result for 1 hour.
 
-- **Parameters** (locale, time filter, pagination, safe search): [rules/parameters.md](rules/parameters.md)
-- **Response format** (result keys, JSON shape, pagination): [rules/response.md](rules/response.md)
-- **Examples** (news, shopping, time-filtered, Bing): [rules/examples.md](rules/examples.md)
-- **SDKs** (Python, JS, Go, Ruby, PHP, Java, .NET): [rules/sdks.md](rules/sdks.md)
-- **All 100+ engines** (flights, hotels, jobs, finance, patents…): [rules/ENGINES.md](rules/ENGINES.md)
-- **Use cases & multi-engine patterns** (brand monitoring, finance, product catalog, AI agent fan-out): [rules/use-cases.md](rules/use-cases.md)
+## Reference links
+
+- [serpapi.com/search-api](https://serpapi.com/search-api) — full API docs
+- [serpapi.com/search-engine-apis](https://serpapi.com/search-engine-apis) — all engines
+- [serpapi.com/pricing](https://serpapi.com/pricing) — credits & plans
+- [github.com/serpapi](https://github.com/serpapi) — SDKs, CLI, MCP server

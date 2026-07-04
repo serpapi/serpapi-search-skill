@@ -1,1 +1,5 @@
 .sisyphus/
+*.py
+__pycache__/
+.aut-traces/
+.opencode/

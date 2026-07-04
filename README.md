@@ -1,169 +1,56 @@
-# SerpApi Search Skill
+# serpapi-search-skill [![MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
-Universal web search skill for AI coding agents with support for 100+ search engines.
-
-Search the web, news, images, shopping, videos, maps, flights, hotels, jobs, and academic databases directly from your AI agent. Powered by [SerpApi](https://serpapi.com).
+Search the web from any AI agent — 100+ engines via one MCP tool.
 
 ## Quick Start
 
-1.  Get your API key from the [SerpApi Dashboard](https://serpapi.com/dashboard).
-2.  Set the environment variable: `export SERPAPI_KEY=your_key_here`
-3.  Install the skill:
-    ```bash
-    npx skills add serpapi/skills
-    ```
-4.  Start searching! See [SKILL.md](skills/serpapi-web-search/SKILL.md) for usage.
+1. Get your key: [serpapi.com/dashboard](https://serpapi.com/dashboard)
+2. Add to your MCP config (Cursor, Windsurf, Codex, Claude Desktop — same shape):
 
-## What's Included
-
-- [SKILL.md](skills/serpapi-web-search/SKILL.md): Core skill definition — invocation, engine selection, composition patterns.
-- [LESSONS.md](skills/serpapi-web-search/LESSONS.md): Deep knowledge for JIT injection — quota recovery, geo targeting, pagination, advanced patterns.
-- [rules/ENGINES.md](skills/serpapi-web-search/rules/ENGINES.md): Catalog of 133 supported search engines.
-- [rules/parameters.md](skills/serpapi-web-search/rules/parameters.md): All query parameters with examples.
-- [rules/response.md](skills/serpapi-web-search/rules/response.md): Response format and result key reference.
-- [rules/examples.md](skills/serpapi-web-search/rules/examples.md): CLI examples for common search types.
-- [rules/use-cases.md](skills/serpapi-web-search/rules/use-cases.md): Multi-engine patterns, fan-out, usage estimation.
-- [api-key-setup.md](docs/api-key-setup.md): Detailed configuration guide for all agents.
-- [AGENTS.md](AGENTS.md): Discovery file for agent integration.
-- [LICENSE](LICENSE): MIT License terms.
-
-## Installation
-
-The easiest way to install across all your agents at once:
-
-```bash
-npx skills add serpapi/skills
-```
-
-This installs via the [skills CLI](https://github.com/vercel-labs/skills) and supports Claude Code, Cursor, Codex, OpenCode, Windsurf, and [40+ more agents](https://github.com/vercel-labs/skills#supported-agents).
-
-For agent-specific or manual installation:
-
-### Claude Code
-```bash
-git clone https://github.com/serpapi/skills.git
-# Global install (available to all projects):
-cp -r skills/serpapi-web-search ~/.claude/skills/
-# Project-scoped install:
-cp -r skills/serpapi-web-search .claude/skills/
-```
-See [api-key-setup.md](docs/api-key-setup.md#claude-code) for MCP configuration.
-
-### Cursor
-```bash
-cp -r skills/serpapi-web-search .cursor/skills/
-```
-Or use the Remote Rules URL pointing to your repository's `SKILL.md`.
-
-### Codex
-```bash
-cp -r skills/serpapi-web-search .agents/skills/
-```
-
-### Windsurf
-```bash
-cp -r skills/serpapi-web-search .windsurf/skills/
-```
-
-### OpenClaw
-```bash
-cp -r skills/serpapi-web-search ~/.openclaw/skills/
-```
-
-### NemoClaw (inside sandbox)
-
-```bash
-# 1. Install serpapi-cli inside the sandbox
-go install github.com/serpapi/serpapi-cli/cmd/serpapi@latest
-export SERPAPI_KEY=your_key_here
-
-# 2. Copy the skill into the workspace
-cp -r skills/serpapi-web-search skills/serpapi-web-search
-
-# 3. Apply the network policy
-openshell policy set skills/serpapi-web-search/serpapi.yaml
-
-# 4. Add to ~/.openclaw/openclaw.json
-# { "skills": { "entries": { "serpapi-web-search": { "enabled": true,
-#   "apiKey": { "source": "env", "provider": "default", "id": "SERPAPI_KEY" } } } } }
-
-# 5. Make permanent
-nemoclaw onboard
-```
-
-Or paste this into any AI assistant with access to your NemoClaw workspace:
-
-```
-Fetch https://raw.githubusercontent.com/serpapi/skills/main/skills/serpapi-web-search/SKILL.md
-and save it to skills/serpapi-web-search/SKILL.md.
-
-Fetch https://raw.githubusercontent.com/serpapi/skills/main/skills/serpapi-web-search/serpapi.yaml
-and save it to nemoclaw-blueprint/policies/presets/serpapi.yaml.
-
-Add this to ~/.openclaw/openclaw.json (home directory, not workspace):
+```json
 {
-  "skills": {
-    "entries": {
-      "serpapi-web-search": {
-        "enabled": true,
-        "apiKey": { "source": "env", "provider": "default", "id": "SERPAPI_KEY" }
-      }
+  "mcpServers": {
+    "serpapi": {
+      "command": "npx",
+      "args": ["-y", "@serpapi/serpapi-mcp"],
+      "env": { "SERPAPI_KEY": "your_key_here" }
     }
   }
 }
-
-Then run: nemoclaw onboard
 ```
 
-### OpenCode
+**Claude Code CLI:**
 ```bash
-cp -r skills/serpapi-web-search .opencode/skills/
+claude mcp add serpapi -- npx -y @serpapi/serpapi-mcp
 ```
-OpenCode also automatically reads skills from `.claude/skills/` and `.agents/skills/`.
+Set the key: `claude mcp env serpapi SERPAPI_KEY your_key_here`
 
-### Universal (curl)
-Download the skill definition directly to any directory:
-```bash
-curl -O https://raw.githubusercontent.com/serpapi/skills/main/skills/serpapi-web-search/SKILL.md
-```
+## Verify
 
-### serpapi CLI
-If you prefer a CLI over raw curl, install the [serpapi CLI](https://github.com/serpapi/serpapi-cli):
-```bash
-brew install serpapi/tap/serpapi-cli
-```
-Then search directly from your shell:
-```bash
-export SERPAPI_KEY=your_key_here
-serpapi search engine=google_light q="coffee shops in Austin"
-```
+Ask your agent: **"What search tools do you have?"** — expect `serpapi_search`.
 
-## API Key Setup
+## Local Execution
 
-Configure your `SERPAPI_KEY` for secure access. Detailed instructions for environment variables, MCP settings, and CI/CD are available in [api-key-setup.md](docs/api-key-setup.md).
+Replace `"args"` with `["-y", "@serpapi/serpapi-mcp", "--local"]` in the config above.
 
-## Available Engines
+## Why MCP
 
-Search across 100+ platforms including Google, Bing, DuckDuckGo, YouTube, and Amazon. Use **Light** endpoints for faster responses and lower cost:
+| Method | Agent discovery rate |
+|--------|---------------------|
+| MCP tool registration | ~100% |
+| Skill file on disk | 0% |
 
-- `google_light`: Fastest general web search (default).
-- `google_images_light`: Optimized image search.
-- `google_news_light`: Latest news results.
-- `google_shopping_light`: Product pricing and availability.
-- `google_videos_light`: Video search.
-- `duckduckgo_light`: Privacy-focused web results.
+## CI/CD
 
-See [rules/ENGINES.md](skills/serpapi-web-search/rules/ENGINES.md) for the full list of 107 engines.
+Set `SERPAPI_KEY` as a repo secret. Never commit keys.
 
-## Links
+## See Also
 
-- [SerpApi Website](https://serpapi.com)
-- [API Dashboard](https://serpapi.com/dashboard)
-- [Search Playground](https://serpapi.com/playground)
-- [Documentation](https://serpapi.com/search-api)
+- [`skills/serpapi-web-search/SKILL.md`](skills/serpapi-web-search/SKILL.md) — engine selection, examples, parameters
+- [`@serpapi/serpapi-mcp`](https://github.com/serpapi/serpapi-mcp) — MCP server source
+- [`serpapi-cli`](https://github.com/serpapi/serpapi-cli) — terminal usage
+- [serpapi.com/docs](https://serpapi.com/docs) — full API reference
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+MIT
