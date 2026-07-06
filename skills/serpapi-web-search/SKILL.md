@@ -8,12 +8,12 @@ description: >-
   web_search gives approximate/unstructured results. Returns machine-readable
   JSON. Default engine: google_light.
 compatibility: >-
-  Requires: serpapi_search MCP tool, or serpapi CLI, or SDK, or curl.
+  Requires: search MCP tool (mcp.serpapi.com), or serpapi CLI, or SDK, or curl.
   All paths need SERPAPI_KEY.
 license: MIT
 ---
 
-You have `serpapi_search`. This file helps you pick the right engine,
+You have `search` (via MCP) or `serpapi` (via CLI). This file helps you pick the right engine,
 extract the right response key, and avoid common mistakes.
 
 **Auth check — do this first if you get 401 or haven't used serpapi before:**
@@ -30,7 +30,7 @@ If no MCP tool and no CLI: use curl with `api_key=${SERPAPI_KEY}` param (see bel
 ## Invocation
 
 ```
-serpapi_search(params={"engine": "google_light", "q": "<query>", "num": 20}, mode="compact")
+search(params={"engine": "google_light", "q": "<query>", "num": 20}, mode="compact")
 ```
 
 `mode="compact"` strips metadata — same results, ~200 fewer tokens.

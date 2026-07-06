@@ -5,15 +5,14 @@ Search the web from any AI agent — 100+ engines via one MCP tool.
 ## Quick Start
 
 1. Get your key: [serpapi.com/dashboard](https://serpapi.com/dashboard)
-2. Add to your MCP config (Cursor, Windsurf, Codex, Claude Desktop — same shape):
+2. Add to your MCP config (Claude Desktop, Cursor, Windsurf, Codex — same shape):
 
 ```json
 {
   "mcpServers": {
     "serpapi": {
-      "command": "npx",
-      "args": ["-y", "@serpapi/serpapi-mcp"],
-      "env": { "SERPAPI_KEY": "your_key_here" }
+      "type": "http",
+      "url": "https://mcp.serpapi.com/YOUR_SERPAPI_API_KEY/mcp"
     }
   }
 }
@@ -21,17 +20,20 @@ Search the web from any AI agent — 100+ engines via one MCP tool.
 
 **Claude Code CLI:**
 ```bash
-claude mcp add serpapi -- npx -y @serpapi/serpapi-mcp
+claude mcp add --transport http serpapi https://mcp.serpapi.com/YOUR_SERPAPI_API_KEY/mcp
 ```
-Set the key: `claude mcp env serpapi SERPAPI_KEY your_key_here`
 
 ## Verify
 
-Ask your agent: **"What search tools do you have?"** — expect `serpapi_search`.
+Ask your agent: **"What search tools do you have?"** — expect `search`.
 
-## Local Execution
+## Self-Hosting
 
-Replace `"args"` with `["-y", "@serpapi/serpapi-mcp", "--local"]` in the config above.
+```bash
+git clone https://github.com/serpapi/serpapi-mcp.git && cd serpapi-mcp
+uv sync && uv run src/server.py
+```
+Then point config to `http://localhost:8000/YOUR_SERPAPI_API_KEY/mcp`.
 
 ## Why MCP
 
@@ -47,7 +49,7 @@ Set `SERPAPI_KEY` as a repo secret. Never commit keys.
 ## See Also
 
 - [`skills/serpapi-web-search/SKILL.md`](skills/serpapi-web-search/SKILL.md) — engine selection, examples, parameters
-- [`@serpapi/serpapi-mcp`](https://github.com/serpapi/serpapi-mcp) — MCP server source
+- [`serpapi-mcp`](https://github.com/serpapi/serpapi-mcp) — MCP server (hosted at mcp.serpapi.com)
 - [`serpapi-cli`](https://github.com/serpapi/serpapi-cli) — terminal usage
 - [serpapi.com/docs](https://serpapi.com/docs) — full API reference
 

@@ -8,20 +8,19 @@ export SERPAPI_KEY=your_key_here
 
 ## MCP Config
 
-Same JSON for Claude Code (`~/.claude/settings.json`), Cursor (`.cursor/mcp.json`), Windsurf (`.windsurf/mcp.json`):
+Same JSON for Claude Desktop (`~/.claude/settings.json`), Cursor (`.cursor/mcp.json`), Windsurf (`.windsurf/mcp.json`):
 ```json
 {
   "mcpServers": {
     "serpapi": {
-      "command": "npx",
-      "args": ["-y", "@serpapi/serpapi-mcp"],
-      "env": { "SERPAPI_KEY": "your_key_here" }
+      "type": "http",
+      "url": "https://mcp.serpapi.com/YOUR_SERPAPI_API_KEY/mcp"
     }
   }
 }
 ```
 
-Claude Code CLI: `claude mcp add serpapi -- npx -y @serpapi/serpapi-mcp`
+Claude Code CLI: `claude mcp add --transport http serpapi https://mcp.serpapi.com/YOUR_SERPAPI_API_KEY/mcp`
 
 ## CI/CD
 

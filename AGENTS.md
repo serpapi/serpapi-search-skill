@@ -14,7 +14,7 @@
 
 ## Editing rules
 
-- Every fact must be one agents can't derive from the `serpapi_search` tool schema + live responses. If it's in the schema, cut it.
+- Every fact must be one agents can't derive from the `search` tool schema + live responses. If it's in the schema, cut it.
 - Never commit API keys. Placeholder: `your_key_here`. Env var: `SERPAPI_KEY`.
 - Never reference competitor SERP scrapers.
 - Prefer `_light` engine variants in examples (faster, cheaper).
