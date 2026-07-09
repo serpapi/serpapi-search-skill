@@ -1,8 +1,8 @@
 # SerpApi Search Engines Catalog
 
-Complete list of 133 SerpApi search engines. Use the `engine` parameter to select the desired search engine. Prefer `_light` variants — they're faster and cheaper. See [response.md](response.md) for result keys by engine.
+Complete list of 134 SerpApi search engines. Use the `engine` parameter to select the desired search engine. Prefer `_light` variants — they're faster and cheaper. See [response.md](response.md) for result keys by engine.
 
-## Google (69 engines)
+## Google (70 engines)
 
 | Engine | Description | Key Parameters |
 |--------|-------------|----------------|
@@ -62,6 +62,7 @@ Complete list of 133 SerpApi search engines. Use the `engine` parameter to selec
 | google_trends_news | Google Trends news articles | q, geo, hl |
 | google_trends_trending_now | Google Trends trending searches | geo, hl |
 | google_events | Google Events search | q, location, gl, hl |
+| google_sports | Google Sports games/leagues/teams (no `q` — uses `kgmid`) | kgmid, sp, type, tab |
 | google_play | Google Play Store results | q, store, gl, hl |
 | google_play_product | Google Play product details | product_id, gl |
 | google_play_reviews | Google Play product reviews | product_id, gl |

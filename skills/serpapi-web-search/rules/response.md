@@ -39,6 +39,7 @@ All engines return JSON with `search_metadata` and `search_parameters` at the to
 | Flights (`google_flights`) | `best_flights`, `other_flights` |
 | Finance (`google_finance`) | `summary`, `graph`, `news_results` |
 | Trends (`google_trends`) | `interest_over_time`, `related_queries`, `related_topics` |
+| Sports (`google_sports`) | `game_results`, `league_results`, `team_results` (by `type`) |
 
 ## Pagination
 
